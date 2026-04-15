@@ -7,33 +7,35 @@ import {
 import { 
   getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken
 } from 'firebase/auth';
-import { Users, Plus, RefreshCw, ArrowRight } from 'lucide-react';
+import { Users, RefreshCw, ArrowRight } from 'lucide-react';
 
-// --- 安全的配置获取 ---
+/**
+ * 安全地获取 Firebase 配置
+ * 适配 Canvas 预览环境与 Vercel 生产环境
+ */
 const getFirebaseConfig = () => {
   try {
-    // 1. 尝试从全局变量 __firebase_config 获取 (Canvas 预览环境)
+    // 1. 预览环境：尝试从全局变量获取
     if (typeof __firebase_config !== 'undefined' && __firebase_config) {
       return JSON.parse(__firebase_config);
     }
     
-    // 2. 尝试从 process.env 获取 (Vercel/本地 部署环境)
-    // 使用 typeof 检查防止 "process is not defined" 错误
+    // 2. 生产环境：从环境变量获取 (注意：Vercel 需配置 REACT_APP_FIREBASE_CONFIG)
     if (typeof process !== 'undefined' && process.env && process.env.REACT_APP_FIREBASE_CONFIG) {
       return JSON.parse(process.env.REACT_APP_FIREBASE_CONFIG);
     }
 
-    // 3. 回退默认值 (仅用于本地开发调试)
+    // 3. 占位符：防止初始化崩溃
     return {
-      apiKey: "", 
+      apiKey: "unconfigured", 
       authDomain: "",
-      projectId: "",
+      projectId: "rummikub-v1",
       storageBucket: "",
       messagingSenderId: "",
       appId: ""
     };
   } catch (e) {
-    console.error("Firebase config parse error", e);
+    console.error("Firebase config error", e);
     return {};
   }
 };
@@ -51,7 +53,7 @@ const COLORS = [
   { name: 'orange', text: 'text-orange-500' }
 ];
 
-function App() {
+export default function App() {
   const [user, setUser] = useState(null);
   const [roomID, setRoomID] = useState('');
   const [gameState, setGameState] = useState(null);
@@ -95,7 +97,10 @@ function App() {
         setRoomID('');
         setGameState(null);
       }
-    }, (err) => console.error("Firestore Listen Error", err));
+    }, (err) => {
+        // 静默处理监听错误，避免 UI 崩溃
+        console.debug("Firestore snapshot error", err);
+    });
 
     return () => unsubscribe();
   }, [user, roomID]);
@@ -136,7 +141,7 @@ function App() {
       await setDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'rooms', id), initialData);
       setRoomID(id);
     } catch (e) {
-      alert("创建房间失败");
+      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -151,7 +156,7 @@ function App() {
       if (snap.exists()) {
         const data = snap.data();
         if (!data.playerOrder.includes(user.uid)) {
-          if (data.playerOrder.length >= 4) return alert("房间已满");
+          if (data.playerOrder.length >= 4) return;
           const newPlayers = { ...data.players };
           newPlayers[user.uid] = { uid: user.uid, name: `玩家 ${data.playerOrder.length + 1}`, hand: [] };
           await updateDoc(roomRef, {
@@ -160,9 +165,9 @@ function App() {
           });
         }
         setRoomID(inputID);
-      } else {
-        alert("房间不存在");
       }
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -170,9 +175,9 @@ function App() {
 
   if (authStatus === 'initializing') {
     return (
-      <div className="h-screen bg-slate-950 flex flex-col items-center justify-center text-white font-sans">
+      <div className="h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
         <RefreshCw className="animate-spin mb-4 text-blue-500" />
-        <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">正在建立加密连接...</p>
+        <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">加载中...</p>
       </div>
     );
   }
@@ -266,5 +271,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
