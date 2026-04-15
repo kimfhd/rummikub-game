@@ -313,14 +313,17 @@
 
         // Initialize App
         const initAuth = async () => {
-            let firebaseConfig;
-            try {
-                firebaseConfig = JSON.parse(__firebase_config);
-            } catch (e) {
-                // Fallback for isolated testing, usually provided by the environment
-                console.warn("Using fallback Firebase config.");
-                firebaseConfig = { projectId: "demo-project" };
-            }
+            // 👇 ！！！修改这里：将下面的对象替换为你刚刚在 Firebase 复制的真实配置 ！！！ 👇
+            const firebaseConfig = {
+                apiKey: "AIzaSyDZO5rUi0ig2Z50FycbZQ96EUEOoyyeziw",
+                authDomain: "rummikub-multiplayer.firebaseapp.com",
+                projectId: "rummikub-multiplayer",
+                storageBucket: "rummikub-multiplayer.firebasestorage.app",
+                messagingSenderId: "219008004003",
+                appId: "1:219008004003:web:fb425ecd6ec7441b2ff416",
+                measurementId: "G-FTPB5BDTC9"
+            };
+            // 👆 ！！！替换结束 ！！！ 👆
 
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
