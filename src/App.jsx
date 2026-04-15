@@ -1,249 +1,116 @@
 /* global __firebase_config, __app_id, __initial_auth_token */
 import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
-import { 
-  getFirestore, doc, setDoc, getDoc, onSnapshot, 
-  updateDoc, collection 
-} from 'firebase/firestore';
-import { 
-  getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken
-} from 'firebase/auth';
-import { Users, RefreshCw, ArrowRight, ShieldAlert, WifiOff } from 'lucide-react';
 
-// -----------------------------------------------------------------------------
-// 1. Firebase 初始化逻辑 (适配 Vercel 环境变量)
-// -----------------------------------------------------------------------------
-const getSafeConfig = () => {
-  // 优先尝试环境注入
-  if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-    return typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
-  }
-
-  // 尝试读取 Vercel 环境变量 (React App / Vite / Next.js 全兼容匹配)
-  const env = typeof process !== 'undefined' ? process.env : {};
-  const configStr = env.REACT_APP_FIREBASE_CONFIG || env.VITE_FIREBASE_CONFIG || env.NEXT_PUBLIC_FIREBASE_CONFIG;
-
-  if (configStr) {
-    try {
-      // 如果是字符串形式的 JSON，进行解析
-      return typeof configStr === 'string' ? JSON.parse(configStr) : configStr;
-    } catch (e) {
-      console.error("Firebase Config Parse Error:", e);
-      return null;
-    }
-  }
-  return null;
-};
-
-const firebaseConfig = getSafeConfig();
-let app, auth, db;
-
-if (firebaseConfig) {
-  try {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-  } catch (e) {
-    console.error("Firebase Initialization Error:", e);
-  }
-}
-
-const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'rummikub-multiplayer';
-
-// -----------------------------------------------------------------------------
-// 2. 主程序组件
-// -----------------------------------------------------------------------------
+/**
+ * 修复后的 Firebase 环境变量调试器
+ * 1. 移除了 JSX 中不合法的 ">" 字符
+ * 2. 优化了对 import.meta 的访问以兼容 ES2015 环境
+ */
 export default function App() {
-  const [user, setUser] = useState(null);
-  const [roomID, setRoomID] = useState('');
-  const [gameState, setGameState] = useState(null);
-  const [inputID, setInputID] = useState('');
-  const [status, setStatus] = useState(firebaseConfig ? 'initializing' : 'config_missing');
+  const [debugInfo, setDebugInfo] = useState({});
 
   useEffect(() => {
-    if (!auth) return;
-
-    const initConnection = async () => {
-      try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
-      } catch (err) {
-        console.error("Auth Failed:", err);
-        setStatus('auth_error');
-      }
-    };
-
-    initConnection();
-    return onAuthStateChanged(auth, (u) => {
-      if (u) {
-        setUser(u);
-        setStatus('ready');
-      }
+    // 扫描所有可能的环境变量位置
+    const env = typeof process !== 'undefined' ? process.env : {};
+    
+    // 尝试安全地访问 Vite 环境变量
+    let viteEnv = {};
+    try {
+      // 使用 window 检查或 try-catch 避免 esbuild 在 es2015 目标下报错
+      viteEnv = (import.meta && import.meta.env) ? import.meta.env : {};
+    } catch (e) {
+      viteEnv = {};
+    }
+    
+    setDebugInfo({
+      "当前运行环境": typeof process !== 'undefined' ? "Node/CRA/Next.js" : "ESModules/Vite",
+      "检测到 REACT_APP 前缀": !!env.REACT_APP_FIREBASE_CONFIG,
+      "检测到 VITE 前缀": !!viteEnv.VITE_FIREBASE_CONFIG,
+      "检测到 NEXT_PUBLIC 前缀": !!env.NEXT_PUBLIC_FIREBASE_CONFIG,
+      "__firebase_config (模拟注入)": !!(window.__firebase_config),
+      "命中相关变量键名": Object.keys({...env, ...viteEnv}).filter(key => 
+        key.includes('CONFIG') || key.includes('FIREBASE') || key.includes('APP')
+      )
     });
   }, []);
 
-  // 监听房间数据
-  useEffect(() => {
-    if (!user || !roomID || !db) return;
-    
-    // 遵循 RULE 1: 使用特定的路径结构
-    const roomRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'rooms', roomID);
-    
-    const unsubscribe = onSnapshot(roomRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setGameState(docSnap.data());
-      } else {
-        console.log("Room does not exist");
-      }
-    }, (error) => {
-      console.error("Firestore Listen Error:", error);
-    });
+  return (
+    <div className="min-h-screen bg-slate-950 text-green-400 p-8 font-mono text-sm leading-relaxed">
+      <h1 className="text-xl font-bold border-b border-green-900 pb-4 mb-6 flex items-center gap-2">
+        <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+        Firebase 环境变量调试器 (已修复)
+      </h1>
+      
+      <div className="space-y-6 max-w-2xl">
+        <section className="bg-slate-900/50 p-4 rounded-lg border border-green-900/30">
+          <h2 className="text-white mb-3 font-bold border-l-4 border-green-600 pl-2">1. 扫描结果</h2>
+          <div className="space-y-2">
+            {Object.entries(debugInfo).map(([key, value]) => (
+              <div key={key} className="flex justify-between border-b border-green-900/10 py-1">
+                <span className="text-slate-400">{key}:</span>
+                <span className={value === true ? "text-green-400 font-bold" : (Array.isArray(value) && value.length > 0 ? "text-blue-400" : "text-red-500")}>
+                  {Array.isArray(value) ? (value.length > 0 ? value.join(', ') : '无') : String(value)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
 
-    return () => unsubscribe();
-  }, [user, roomID]);
+        <section className="bg-slate-900 p-5 rounded-xl border border-blue-900/50 shadow-xl">
+          <h2 className="text-white mb-3 font-bold flex items-center gap-2">
+             诊断建议
+          </h2>
+          {(!debugInfo["检测到 REACT_APP 前缀"] && !debugInfo["检测到 VITE 前缀"]) ? (
+            <div className="text-amber-400 space-y-3">
+              <p className="flex items-center gap-2 font-bold text-red-500">
+                ❌ 状态：前端未读取到任何有效的加密配置。
+              </p>
+              <p className="text-slate-300">请按照以下步骤操作：</p>
+              <ol className="list-decimal ml-5 space-y-2 text-slate-300">
+                <li>前往 Vercel 项目设置 {'->'} Environment Variables。</li>
+                <li>
+                  <span className="text-white">关键步骤：</span> 
+                  由于不确定你的框架，请同时添加 
+                  <code className="mx-1 bg-black px-1.5 py-0.5 rounded text-pink-400 font-bold">VITE_FIREBASE_CONFIG</code> 
+                  和 
+                  <code className="mx-1 bg-black px-1.5 py-0.5 rounded text-blue-400 font-bold">REACT_APP_FIREBASE_CONFIG</code>。
+                </li>
+                <li>内容均为你的那段 JSON 字符串。</li>
+                <li>
+                  <span className="text-red-400 font-bold italic underline">必须重新部署：</span> 
+                  在 Vercel 顶部菜单点击 Deployments {'->'} 选择最新一次 {'->'} 点击三个点 {'->'} 选 <b>Redeploy</b>。
+                </li>
+              </ol>
+            </div>
+          ) : (
+            <div className="text-green-400">
+              <p className="font-bold text-lg mb-2">✅ 变量已识别！</p>
+              <p className="text-slate-400">系统已成功读取到配置。现在您可以将此调试器代码替换回之前的 Rummikub 游戏代码，游戏将能正常连接数据库。</p>
+            </div>
+          )}
+        </section>
 
-  // 创建房间
-  const handleCreateRoom = async () => {
-    if (!user || !db) return;
-    const newRoomID = Math.floor(1000 + Math.random() * 9000).toString();
-    const roomRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'rooms', newRoomID);
-    
-    try {
-      await setDoc(roomRef, {
-        roomId: newRoomID,
-        host: user.uid,
-        players: { [user.uid]: { name: "Player 1", hand: [] } },
-        playerOrder: [user.uid],
-        status: 'waiting',
-        board: [],
-        lastUpdated: Date.now()
-      });
-      setRoomID(newRoomID);
-    } catch (e) {
-      console.error("Create Room Failed:", e);
-    }
-  };
-
-  // -----------------------------------------------------------------------------
-  // 3. UI 渲染渲染
-  // -----------------------------------------------------------------------------
-
-  // 错误状态：配置缺失
-  if (status === 'config_missing') {
-    return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-10 text-center">
-        <ShieldAlert size={80} className="text-red-500 mb-6" />
-        <h1 className="text-2xl font-bold text-white mb-4">环境变量未生效</h1>
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 text-left max-w-md w-full mb-8">
-          <p className="text-slate-400 text-sm mb-4 font-mono">
-            检测到环境变量 <code className="text-amber-400">REACT_APP_FIREBASE_CONFIG</code> 暂不可用。
-          </p>
-          <ul className="text-slate-300 text-sm space-y-2 list-disc ml-4">
-            <li>如果你刚刚在 Vercel 添加了变量，请执行 <b>Redeploy</b>。</li>
-            <li>如果你使用的是 Vite，请将变量名改为 <code className="text-blue-400">VITE_FIREBASE_CONFIG</code>。</li>
-            <li>确保你的代码仓库已推送到 GitHub 并触发了 Vercel 的构建。</li>
-          </ul>
-        </div>
+        <section>
+          <h2 className="text-slate-500 mb-2 text-xs uppercase tracking-widest">3. 变量内容快照 (脱敏)</h2>
+          <div className="bg-black p-4 rounded border border-green-900/20 overflow-x-auto">
+            <pre className="text-[10px] leading-tight">
+              {JSON.stringify({
+                CRA_Source: typeof process !== 'undefined' ? (process.env.REACT_APP_FIREBASE_CONFIG ? "已加载 (前5位: " + process.env.REACT_APP_FIREBASE_CONFIG.substring(0,5) + "...)" : "未找到") : "环境不支持",
+                Vite_Source: "由于 ES2015 限制，请查阅上方扫描结果"
+              }, null, 2)}
+            </pre>
+          </div>
+        </section>
+      </div>
+      
+      <div className="mt-10 flex gap-4">
         <button 
           onClick={() => window.location.reload()}
-          className="bg-white text-black px-8 py-3 rounded-full font-bold flex items-center gap-2"
+          className="px-6 py-2 bg-green-900/50 hover:bg-green-800 text-green-100 rounded-lg border border-green-700 transition-all flex items-center gap-2"
         >
-          <RefreshCw size={20} /> 检查更新
+          <RefreshCw size={16} /> 刷新并重新检测
         </button>
       </div>
-    );
-  }
-
-  // 加载状态
-  if (status === 'initializing' || !user) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
-        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">Connecting to Firebase...</p>
-      </div>
-    );
-  }
-
-  // 初始大厅
-  if (!roomID) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6">
-        <h1 className="text-5xl font-black text-white italic mb-12 tracking-tighter">RUMMIKUB<span className="text-blue-600">.</span></h1>
-        <div className="w-full max-w-xs space-y-4">
-          <button 
-            onClick={handleCreateRoom}
-            className="w-full h-16 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold text-lg transition-all active:scale-95"
-          >
-            创建房间
-          </button>
-          <div className="relative group">
-            <input 
-              type="text" 
-              placeholder="输入4位房间号" 
-              value={inputID}
-              onChange={(e) => setInputID(e.target.value.replace(/\D/g, '').slice(0, 4))}
-              className="w-full h-16 bg-slate-900 border-2 border-slate-800 rounded-2xl text-center text-2xl font-mono text-white focus:border-blue-500 outline-none transition-colors"
-            />
-            {inputID.length === 4 && (
-              <button 
-                onClick={() => setRoomID(inputID)}
-                className="absolute right-2 top-2 h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center text-white"
-              >
-                <ArrowRight />
-              </button>
-            )}
-          </div>
-        </div>
-        <p className="mt-12 text-slate-600 text-xs font-mono uppercase">User ID: {user.uid.slice(0,8)}...</p>
-      </div>
-    );
-  }
-
-  // 游戏房间 UI
-  return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col font-sans">
-      <header className="h-16 border-b border-white/5 bg-slate-900/50 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="font-mono font-bold tracking-wider">ROOM: {roomID}</span>
-        </div>
-        <button 
-          onClick={() => { setRoomID(''); setGameState(null); }}
-          className="text-xs font-bold text-slate-500 hover:text-white transition-colors"
-        >
-          离开
-        </button>
-      </header>
-
-      <main className="flex-1 flex flex-col items-center justify-center">
-        {gameState ? (
-          <div className="text-center">
-            <Users size={40} className="mx-auto mb-4 text-blue-500" />
-            <h2 className="text-xl font-bold mb-2">房间已就绪</h2>
-            <p className="text-slate-400">当前玩家数量: {Object.keys(gameState.players).length}</p>
-            <div className="mt-6 p-4 bg-slate-900 rounded-xl border border-slate-800 font-mono text-xs text-blue-400">
-              等待房主开始游戏...
-            </div>
-          </div>
-        ) : (
-          <div className="text-center animate-pulse">
-            <WifiOff size={40} className="mx-auto mb-4 text-slate-700" />
-            <p className="text-slate-600 font-medium">正在检索房间信息...</p>
-          </div>
-        )}
-      </main>
-
-      <footer className="h-40 bg-slate-900/80 border-t border-white/5 p-4 flex flex-col items-center justify-center text-slate-500">
-        <p className="text-[10px] uppercase tracking-[0.2em] mb-4">Player Dashboard</p>
-        <div className="flex gap-2">
-           {[1,2,3,4,5,6].map(i => (
-             <div key={i} className="w-10 h-14 bg-slate-800 rounded-lg border border-slate-700/50"></div>
-           ))}
-        </div>
-      </footer>
     </div>
   );
 }
