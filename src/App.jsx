@@ -8,43 +8,46 @@ import {
 import { 
   getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken
 } from 'firebase/auth';
-import { Users, RefreshCw, ArrowRight } from 'lucide-react';
+import { Users, RefreshCw, ArrowRight, AlertCircle } from 'lucide-react';
 
 /**
- * 安全地获取 Firebase 配置
- * 适配 Canvas 预览环境与 Vercel 生产环境
+ * 增强型 Firebase 配置获取
  */
 const getFirebaseConfig = () => {
   try {
-    // 1. 预览环境：尝试从全局变量获取
-    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-      return JSON.parse(__firebase_config);
-    }
-    
-    // 2. 生产环境：从环境变量获取 (注意：Vercel 需配置 REACT_APP_FIREBASE_CONFIG)
-    if (typeof process !== 'undefined' && process.env && process.env.REACT_APP_FIREBASE_CONFIG) {
+    // 1. 优先尝试环境变量 (Vercel 生产环境)
+    // 建议在 Vercel 设置 REACT_APP_FIREBASE_CONFIG 为整个 JSON 字符串
+    if (typeof process !== 'undefined' && process.env.REACT_APP_FIREBASE_CONFIG) {
       return JSON.parse(process.env.REACT_APP_FIREBASE_CONFIG);
     }
 
-    // 3. 占位符：防止初始化崩溃
-    return {
-      apiKey: "unconfigured", 
-      authDomain: "",
-      projectId: "rummikub-v1",
-      storageBucket: "",
-      messagingSenderId: "",
-      appId: ""
-    };
+    // 2. 尝试预览环境全局变量
+    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+      return typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
+    }
+
+    // 3. 回退方案：尝试逐个读取环境变量 (Vercel 标准做法)
+    if (typeof process !== 'undefined' && process.env.REACT_APP_FIREBASE_API_KEY) {
+      return {
+        apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+        authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+        projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+        storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+        appId: process.env.REACT_APP_FIREBASE_APP_ID
+      };
+    }
   } catch (e) {
-    console.error("Firebase config error", e);
-    return {};
+    console.error("Firebase config parsing error", e);
   }
+  return null;
 };
 
-const firebaseConfig = getFirebaseConfig();
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const config = getFirebaseConfig();
+// 如果没有配置，这里会抛错，我们在组件内捕获它
+const app = config ? initializeApp(config) : null;
+const auth = app ? getAuth(app) : null;
+const db = app ? getFirestore(app) : null;
 const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'rummikub-v1';
 
 const COLORS = [
@@ -61,8 +64,15 @@ export default function App() {
   const [inputID, setInputID] = useState('');
   const [loading, setLoading] = useState(false);
   const [authStatus, setAuthStatus] = useState('initializing');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
+    if (!auth) {
+      setAuthStatus('error');
+      setErrorMessage('Firebase 未配置。请在 Vercel 中设置环境变量。');
+      return;
+    }
+
     const initAuth = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -73,6 +83,7 @@ export default function App() {
       } catch (err) {
         console.error("Auth Error", err);
         setAuthStatus('error');
+        setErrorMessage('身份验证失败: ' + err.message);
       }
     };
 
@@ -88,7 +99,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!user || !roomID) return;
+    if (!user || !roomID || !db) return;
 
     const roomRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'rooms', roomID);
     const unsubscribe = onSnapshot(roomRef, (snapshot) => {
@@ -99,16 +110,16 @@ export default function App() {
         setGameState(null);
       }
     }, (err) => {
-        // 静默处理监听错误，避免 UI 崩溃
-        console.debug("Firestore snapshot error", err);
+      console.error("Firestore Listen Error:", err);
     });
 
     return () => unsubscribe();
   }, [user, roomID]);
 
   const createRoom = async () => {
-    if (!user) return;
+    if (!user || !db) return;
     setLoading(true);
+    setErrorMessage('');
     try {
       const id = Math.floor(1000 + Math.random() * 9000).toString();
       const deck = [];
@@ -136,28 +147,34 @@ export default function App() {
           [user.uid]: { uid: user.uid, name: `玩家 1`, hand: [] }
         },
         playerOrder: [user.uid],
-        turnIndex: 0
+        turnIndex: 0,
+        createdAt: Date.now()
       };
 
       await setDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'rooms', id), initialData);
       setRoomID(id);
     } catch (e) {
-      console.error(e);
+      console.error("Create Room Error:", e);
+      setErrorMessage('创建失败: ' + e.message);
     } finally {
       setLoading(false);
     }
   };
 
   const joinRoom = async () => {
-    if (!user || inputID.length !== 4) return;
+    if (!user || !db || inputID.length !== 4) return;
     setLoading(true);
+    setErrorMessage('');
     try {
       const roomRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'rooms', inputID);
       const snap = await getDoc(roomRef);
       if (snap.exists()) {
         const data = snap.data();
         if (!data.playerOrder.includes(user.uid)) {
-          if (data.playerOrder.length >= 4) return;
+          if (data.playerOrder.length >= 4) {
+            setErrorMessage('房间已满');
+            return;
+          }
           const newPlayers = { ...data.players };
           newPlayers[user.uid] = { uid: user.uid, name: `玩家 ${data.playerOrder.length + 1}`, hand: [] };
           await updateDoc(roomRef, {
@@ -166,19 +183,34 @@ export default function App() {
           });
         }
         setRoomID(inputID);
+      } else {
+        setErrorMessage('房间不存在');
       }
     } catch (e) {
-      console.error(e);
+      console.error("Join Error:", e);
+      setErrorMessage('加入失败: ' + e.message);
     } finally {
       setLoading(false);
     }
   };
 
+  // 错误提示 UI
+  if (authStatus === 'error') {
+    return (
+      <div className="h-screen bg-slate-950 flex flex-col items-center justify-center text-white p-6 text-center">
+        <AlertCircle className="text-red-500 mb-4" size={48} />
+        <h2 className="text-xl font-bold mb-2">配置错误</h2>
+        <p className="text-slate-400 text-sm max-w-xs">{errorMessage}</p>
+        <button onClick={() => window.location.reload()} className="mt-6 px-6 py-2 bg-slate-800 rounded-lg text-sm">重试</button>
+      </div>
+    );
+  }
+
   if (authStatus === 'initializing') {
     return (
       <div className="h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
         <RefreshCw className="animate-spin mb-4 text-blue-500" />
-        <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">加载中...</p>
+        <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">正在连接服务器...</p>
       </div>
     );
   }
@@ -187,24 +219,36 @@ export default function App() {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-white font-sans">
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-black italic text-blue-600 tracking-tighter">RUMMIKUB</h1>
+          <h1 className="text-6xl font-black italic text-blue-600 tracking-tighter text-shadow-glow">RUMMIKUB</h1>
           <p className="text-slate-500 text-[10px] tracking-[0.5em] mt-2 font-black uppercase">Online Arena</p>
         </div>
+        
+        {errorMessage && (
+          <div className="mb-6 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-400 text-xs font-bold">
+            {errorMessage}
+          </div>
+        )}
+
         <div className="w-full max-w-sm space-y-4">
           <button 
             onClick={createRoom} 
             disabled={loading}
-            className="w-full h-16 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-lg shadow-xl shadow-blue-900/20 active:scale-95 transition-all disabled:opacity-50"
+            className="w-full h-16 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-lg shadow-xl shadow-blue-900/20 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center"
           >
+            {loading ? <RefreshCw className="animate-spin mr-2" /> : null}
             {loading ? '处理中...' : '创建新房间'}
           </button>
           <div className="relative flex items-center">
             <input 
-              type="text" placeholder="房间号" maxLength={4} value={inputID}
+              type="text" placeholder="输入4位房间号" maxLength={4} value={inputID}
               onChange={e => setInputID(e.target.value.replace(/\D/g, ''))}
-              className="w-full h-16 bg-slate-900 border-2 border-slate-800 rounded-2xl text-center text-2xl font-mono focus:border-blue-500 focus:outline-none transition-all"
+              className="w-full h-16 bg-slate-900 border-2 border-slate-800 rounded-2xl text-center text-2xl font-mono focus:border-blue-500 focus:outline-none transition-all placeholder:text-slate-700"
             />
-            <button onClick={joinRoom} className="absolute right-2 p-3 bg-slate-800 rounded-xl text-blue-400 hover:text-white transition-colors">
+            <button 
+              onClick={joinRoom} 
+              disabled={loading || inputID.length !== 4}
+              className="absolute right-2 p-3 bg-slate-800 rounded-xl text-blue-400 hover:text-white transition-colors disabled:opacity-30"
+            >
               <ArrowRight />
             </button>
           </div>
