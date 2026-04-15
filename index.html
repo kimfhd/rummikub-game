@@ -174,14 +174,14 @@
                     <input type="text" id="playerNameInput" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 text-white mt-1 outline-none focus:border-blue-500 transition-colors" placeholder="输入名字..." maxlength="10">
                 </div>
                 <div class="grid grid-cols-2 gap-3 mt-2">
-                    <button onclick="uiCreateRoom()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-all active:scale-95">创建房间</button>
-                    <button onclick="uiShowJoinModal()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg transition-all active:scale-95">加入房间</button>
+                    <button onclick="window.uiCreateRoom()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-all active:scale-95">创建房间</button>
+                    <button onclick="window.uiShowJoinModal()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg transition-all active:scale-95">加入房间</button>
                 </div>
             </div>
             <div id="joinForm" class="hidden flex-col gap-4 mt-4 pt-4 border-t border-slate-700">
                 <input type="text" id="roomCodeInput" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 text-white uppercase outline-none focus:border-blue-500" placeholder="输入房间码" maxlength="6">
-                <button onclick="uiJoinRoom()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition-all active:scale-95">确认加入</button>
-                <button onclick="uiHideJoinModal()" class="text-slate-400 text-sm mt-2">返回</button>
+                <button onclick="window.uiJoinRoom()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition-all active:scale-95">确认加入</button>
+                <button onclick="window.uiHideJoinModal()" class="text-slate-400 text-sm mt-2">返回</button>
             </div>
         </div>
     </div>
@@ -197,12 +197,10 @@
             
             <div class="w-full mb-6">
                 <h3 class="text-xs font-bold text-slate-400 uppercase mb-2">当前玩家 (<span id="playerCount">0</span>/4)</h3>
-                <div id="waitingPlayerList" class="flex flex-col gap-2">
-                    <!-- 玩家列表生成区 -->
-                </div>
+                <div id="waitingPlayerList" class="flex flex-col gap-2"></div>
             </div>
             
-            <button id="startGameBtn" onclick="gameStartLogic()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 text-white font-bold py-3 rounded-lg transition-all active:scale-95 hidden shadow-lg shadow-blue-500/20">开始游戏</button>
+            <button id="startGameBtn" onclick="window.gameStartLogic()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 text-white font-bold py-3 rounded-lg transition-all active:scale-95 hidden shadow-lg shadow-blue-500/20">开始游戏</button>
             <p id="waitingHostText" class="text-sm text-slate-400 hidden">等待房主开始...</p>
         </div>
     </div>
@@ -221,13 +219,10 @@
                     </div>
                 </div>
                 <div class="flex gap-2">
-                    <button id="resetTurnBtn" onclick="resetTurn()" class="px-3 py-1.5 bg-slate-800 rounded-lg text-[10px] font-bold border border-white/5 active:scale-95 transition-all">重置本地盘面</button>
+                    <button id="resetTurnBtn" onclick="window.resetTurn()" class="px-3 py-1.5 bg-slate-800 rounded-lg text-[10px] font-bold border border-white/5 active:scale-95 transition-all">重置本地盘面</button>
                 </div>
             </div>
-            <!-- 对手状态栏 -->
-            <div id="playerStatusBar" class="player-avatars rounded-xl">
-                <!-- 头像动态生成 -->
-            </div>
+            <div id="playerStatusBar" class="player-avatars rounded-xl"></div>
         </header>
 
         <main class="game-board" id="mainBoard">
@@ -242,8 +237,8 @@
             <div class="max-w-6xl mx-auto flex flex-col gap-2 relative z-10">
                 <div class="flex justify-between items-center px-1 mb-1">
                     <div class="flex gap-2">
-                        <button id="sortRunsBtn" onclick="setSortMode('runs')" class="sort-btn text-[9px] font-bold px-3 py-1.5 rounded-full border border-white/10 transition-all">按颜色排序</button>
-                        <button id="sortGroupsBtn" onclick="setSortMode('groups')" class="sort-btn text-[9px] font-bold px-3 py-1.5 rounded-full border border-white/10 transition-all">按数字排序</button>
+                        <button id="sortRunsBtn" onclick="window.setSortMode('runs')" class="sort-btn text-[9px] font-bold px-3 py-1.5 rounded-full border border-white/10 transition-all">按颜色排序</button>
+                        <button id="sortGroupsBtn" onclick="window.setSortMode('groups')" class="sort-btn text-[9px] font-bold px-3 py-1.5 rounded-full border border-white/10 transition-all">按数字排序</button>
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="flex flex-col items-end">
@@ -258,8 +253,8 @@
                 <div id="rackRow1" class="rack-row" data-row="1"></div>
 
                 <div class="flex gap-3 h-12 mt-1">
-                    <button id="drawBtn" onclick="handleDraw()" class="flex-1 bg-slate-800 hover:bg-slate-700 rounded-xl font-bold border border-white/5 text-sm active:scale-95 transition-all">摸牌</button>
-                    <button id="finishBtn" onclick="finishTurn()" class="flex-[3] rounded-xl font-black transition-all active:scale-95 flex flex-col items-center justify-center shadow-lg bg-slate-700 opacity-50 cursor-not-allowed">
+                    <button id="drawBtn" onclick="window.handleDraw()" class="flex-1 bg-slate-800 hover:bg-slate-700 rounded-xl font-bold border border-white/5 text-sm active:scale-95 transition-all">摸牌</button>
+                    <button id="finishBtn" onclick="window.finishTurn()" class="flex-[3] rounded-xl font-black transition-all active:scale-95 flex flex-col items-center justify-center shadow-lg bg-slate-700 opacity-50 cursor-not-allowed">
                         <span class="text-sm">结束回合</span>
                         <span id="scoreHint" class="text-[9px] font-medium opacity-80">出分: 0</span>
                     </button>
@@ -268,13 +263,11 @@
         </footer>
     </div>
 
-    <!-- Firebase SDK Imports -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Constants & Utilities
         const COLORS = ['color-black', 'color-red', 'color-blue', 'color-orange'];
         const COLOR_ORDER = { 'color-black': 1, 'color-red': 2, 'color-blue': 3, 'color-orange': 4 };
         const MAX_PER_ROW = 16;
@@ -294,11 +287,10 @@
         window.user = null;
         window.db = null;
         window.currentRoomId = null;
-        window.roomData = null; // Syncs from Firestore
+        window.roomData = null;
         window.unsubscribeRoom = null;
-        window.appId = typeof __app_id !== 'undefined' ? __app_id : 'default-rummikub-app';
+        window.appId = "rummikub_v1"; 
 
-        // Local State (for current turn actions)
         window.localState = {
             handRows: [[], []], 
             boardMelds: [],
@@ -307,13 +299,14 @@
             draggedItem: null,
             pressTimer: null,
             multiSelection: null,
-            initialBoardState: null, // to reset turn
+            initialBoardState: null,
             initialHandState: null
         };
 
-        // Initialize App
+        // -------------------------------------------------------------
+        // Firebase Auth & Init
+        // -------------------------------------------------------------
         const initAuth = async () => {
-            // 👇 ！！！修改这里：将下面的对象替换为你刚刚在 Firebase 复制的真实配置 ！！！ 👇
             const firebaseConfig = {
                 apiKey: "AIzaSyDZO5rUi0ig2Z50FycbZQ96EUEOoyyeziw",
                 authDomain: "rummikub-multiplayer.firebaseapp.com",
@@ -323,7 +316,6 @@
                 appId: "1:219008004003:web:fb425ecd6ec7441b2ff416",
                 measurementId: "G-FTPB5BDTC9"
             };
-            // 👆 ！！！替换结束 ！！！ 👆
 
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
@@ -332,7 +324,7 @@
             onAuthStateChanged(auth, (u) => {
                 if (u) {
                     window.user = u;
-                    document.getElementById('authStatus').innerText = "连接成功！";
+                    document.getElementById('authStatus').innerText = "在线 (ID: " + u.uid.substr(0, 5) + ")";
                     document.getElementById('setupForm').classList.remove('hidden');
                     document.getElementById('setupForm').classList.add('flex');
                     const savedName = localStorage.getItem('rummikub_name');
@@ -341,29 +333,19 @@
             });
 
             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                await signInAnonymously(auth);
             } catch (error) {
                 console.error("Auth error", error);
-                document.getElementById('authStatus').innerText = "连接失败，请刷新重试。";
+                document.getElementById('authStatus').innerText = "服务不可用 (错误: " + error.code + ")";
             }
         };
 
-        // Run Auth Init
         initAuth();
 
         // -------------------------------------------------------------
-        // UI Navigation & Lobby Logic
+        // UI & Lobby Actions (Exposed to window)
         // -------------------------------------------------------------
         
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
         window.uiShowJoinModal = () => {
             document.getElementById('setupForm').classList.add('hidden');
             document.getElementById('joinForm').classList.remove('hidden');
@@ -376,28 +358,24 @@
             document.getElementById('setupForm').classList.add('flex');
         };
 
-        function getPlayerName() {
+        const switchScreen = (screenId) => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        };
+
+        const getPlayerName = () => {
             let name = document.getElementById('playerNameInput').value.trim();
             if (!name) name = "玩家_" + Math.floor(Math.random() * 1000);
             localStorage.setItem('rummikub_name', name);
             return name;
-        }
+        };
 
-        function generateRoomCode() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            let result = '';
-            for (let i = 0; i < 5; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
-            return result;
-        }
-
-        function getRoomDocRef(roomId) {
-            return doc(window.db, 'artifacts', window.appId, 'public', 'data', `rummikub_${roomId}`);
-        }
+        const getRoomDocRef = (roomId) => doc(window.db, 'rooms', roomId);
 
         window.uiCreateRoom = async () => {
-            if(!window.user) return;
+            if(!window.db || !window.user) return showToast("未连接到服务器");
             const name = getPlayerName();
-            const roomId = generateRoomCode();
+            const roomId = Math.random().toString(36).substr(2, 5).toUpperCase();
             const roomRef = getRoomDocRef(roomId);
 
             const initialData = {
@@ -412,626 +390,301 @@
                 lastUpdated: Date.now()
             };
 
-            await setDoc(roomRef, initialData);
-            window.currentRoomId = roomId;
-            listenToRoom(roomId);
-            switchScreen('screen-waiting');
+            try {
+                await setDoc(roomRef, initialData);
+                window.currentRoomId = roomId;
+                listenToRoom(roomId);
+                switchScreen('screen-waiting');
+            } catch (error) {
+                showToast("创建失败，请确保Firestore规则已开启测试模式");
+            }
         };
 
         window.uiJoinRoom = async () => {
-            if(!window.user) return;
+            if(!window.db || !window.user) return showToast("未连接到服务器");
             const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
-            if(code.length !== 5) return showToast("请输入5位房间码");
+            if(code.length < 3) return showToast("请输入正确的房间码");
             
-            const roomRef = getRoomDocRef(code);
-            const docSnap = await getDoc(roomRef);
-            
-            if (!docSnap.exists()) {
-                return showToast("房间不存在");
-            }
+            try {
+                const roomRef = getRoomDocRef(code);
+                const docSnap = await getDoc(roomRef);
+                if (!docSnap.exists()) return showToast("房间不存在");
 
-            const data = docSnap.data();
-            if (data.status !== 'waiting') return showToast("房间已开始游戏或已关闭");
-            if (data.players.length >= 4) return showToast("房间已满");
-            
-            const existingPlayer = data.players.find(p => p.uid === window.user.uid);
-            const name = getPlayerName();
-            
-            if (!existingPlayer) {
-                data.players.push({ uid: window.user.uid, name: name, hasBrokenIce: false, handRows: [[], []] });
-                await updateDoc(roomRef, { players: data.players, lastUpdated: Date.now() });
-            }
+                const data = docSnap.data();
+                if (data.status !== 'waiting') return showToast("游戏已开始");
+                
+                const existingPlayer = data.players.find(p => p.uid === window.user.uid);
+                if (!existingPlayer) {
+                    data.players.push({ uid: window.user.uid, name: getPlayerName(), hasBrokenIce: false, handRows: [[], []] });
+                    await updateDoc(roomRef, { players: data.players });
+                }
 
-            window.currentRoomId = code;
-            listenToRoom(code);
-            switchScreen('screen-waiting');
+                window.currentRoomId = code;
+                listenToRoom(code);
+                switchScreen('screen-waiting');
+            } catch (error) {
+                showToast("加入失败: " + error.message);
+            }
         };
 
-        function listenToRoom(roomId) {
+        const listenToRoom = (roomId) => {
             if (window.unsubscribeRoom) window.unsubscribeRoom();
-            
             window.unsubscribeRoom = onSnapshot(getRoomDocRef(roomId), (docSnap) => {
-                if (!docSnap.exists()) return showToast("房间已解散");
-                
+                if (!docSnap.exists()) return;
                 const data = docSnap.data();
-                const wasWaiting = (!window.roomData || window.roomData.status === 'waiting');
                 window.roomData = data;
                 
-                if (data.status === 'waiting') {
-                    updateWaitingRoomUI();
-                } else if (data.status === 'playing') {
-                    if (wasWaiting) {
+                if (data.status === 'waiting') updateWaitingUI();
+                else if (data.status === 'playing') {
+                    if (document.getElementById('screen-game').classList.contains('active')) syncGameUI();
+                    else {
                         switchScreen('screen-game');
-                        initializeLocalGameFromRemote();
+                        initLocalGame();
                     }
-                    syncGameUI();
                 } else if (data.status === 'finished') {
                     syncGameUI();
-                    const winner = data.players.find(p => p.uid === data.winnerId);
-                    if(winner) showWinnerModal(winner.name);
+                    const win = data.players.find(p => p.uid === data.winnerId);
+                    if(win) showWinnerModal(win.name);
                 }
-            }, (error) => {
-                console.error("Snapshot error:", error);
-                showToast("同步断开");
             });
-        }
+        };
 
-        function updateWaitingRoomUI() {
+        const updateWaitingUI = () => {
             document.getElementById('displayRoomCode').innerText = window.roomData.roomId;
             document.getElementById('playerCount').innerText = window.roomData.players.length;
-            
             const list = document.getElementById('waitingPlayerList');
-            list.innerHTML = '';
-            
-            window.roomData.players.forEach(p => {
-                const isMe = p.uid === window.user.uid;
-                const isHost = p.uid === window.roomData.hostId;
-                list.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-white">${p.name}</span>
-                            ${isMe ? '<span class="text-[9px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">你</span>' : ''}
-                            ${isHost ? '<span class="text-[9px] bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded">房主</span>' : ''}
-                        </div>
-                    </div>
-                `;
-            });
+            list.innerHTML = window.roomData.players.map(p => `
+                <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700/50 flex justify-between">
+                    <span class="font-bold">${p.name}</span>
+                    ${p.uid === window.roomData.hostId ? '<span class="text-xs text-orange-400">房主</span>' : ''}
+                </div>
+            `).join('');
 
-            const isMyHost = window.roomData.hostId === window.user.uid;
-            const startBtn = document.getElementById('startGameBtn');
-            const waitText = document.getElementById('waitingHostText');
-            
-            if (isMyHost) {
-                startBtn.classList.remove('hidden');
-                waitText.classList.add('hidden');
-                startBtn.disabled = window.roomData.players.length < 1; // Allows testing alone, normally < 2
+            if (window.roomData.hostId === window.user.uid) {
+                document.getElementById('startGameBtn').classList.remove('hidden');
+                document.getElementById('waitingHostText').classList.add('hidden');
             } else {
-                startBtn.classList.add('hidden');
-                waitText.classList.remove('hidden');
+                document.getElementById('startGameBtn').classList.add('hidden');
+                document.getElementById('waitingHostText').classList.remove('hidden');
             }
-        }
+        };
 
         // -------------------------------------------------------------
-        // Game Core & Network Logic
+        // Game Logic & Helpers
         // -------------------------------------------------------------
-
-        function shuffle(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-        }
 
         window.gameStartLogic = async () => {
-            if (!window.user || window.roomData.hostId !== window.user.uid) return;
-            
-            // Build Deck
             let deck = [];
             for (let s=0; s<2; s++) {
-                COLORS.forEach(c => {
-                    for (let v=1; v<=13; v++) deck.push(new Tile(v, c));
-                });
+                COLORS.forEach(c => { for (let v=1; v<=13; v++) deck.push(new Tile(v, c)); });
             }
-            deck.push(new Tile('☻', 'color-red', 'joker'));
-            deck.push(new Tile('☻', 'color-black', 'joker'));
-            shuffle(deck);
+            deck.push(new Tile('☻', 'color-red', 'joker'), new Tile('☻', 'color-black', 'joker'));
+            for(let i=deck.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
 
-            // Deal
             let players = [...window.roomData.players];
             players.forEach(p => {
                 const hand = deck.splice(0, 14);
                 p.handRows = [hand.slice(0, 7), hand.slice(7)];
-                p.hasBrokenIce = false;
             });
 
-            const roomRef = getRoomDocRef(window.currentRoomId);
-            await updateDoc(roomRef, {
+            await updateDoc(getRoomDocRef(window.currentRoomId), {
                 status: 'playing',
                 deck: deck,
                 players: players,
                 boardMelds: [],
-                turnIndex: 0,
-                lastUpdated: Date.now()
+                turnIndex: 0
             });
         };
 
-        function initializeLocalGameFromRemote() {
+        const initLocalGame = () => {
             const me = window.roomData.players.find(p => p.uid === window.user.uid);
-            if (me) {
-                window.localState.handRows = JSON.parse(JSON.stringify(me.handRows));
-                window.localState.isBrokenIce = me.hasBrokenIce;
-            }
-            // Always set manual initially, but applying default runs sort
-            window.localState.sortMode = 'runs';
-            applyCurrentSort();
-            saveTurnState(true);
-        }
-
-        function saveTurnState(forceBoard = false) {
-            window.localState.initialHandState = JSON.parse(JSON.stringify(window.localState.handRows));
-            if (forceBoard) {
-                window.localState.initialBoardState = JSON.parse(JSON.stringify(window.roomData.boardMelds));
-            } else {
-                 window.localState.initialBoardState = JSON.parse(JSON.stringify(window.localState.boardMelds));
-            }
-        }
-
-        // Triggered every time Firestore updates
-        function syncGameUI() {
-            if (!window.roomData || window.roomData.status !== 'playing') return;
-
-            const isMyTurn = window.roomData.players[window.roomData.turnIndex].uid === window.user.uid;
-            
-            // Update Deck
-            document.getElementById('deckCount').innerText = window.roomData.deck.length;
-
-            // Render Player Status Bar
-            const pBar = document.getElementById('playerStatusBar');
-            pBar.innerHTML = '';
-            window.roomData.players.forEach((p, idx) => {
-                const isActive = idx === window.roomData.turnIndex;
-                const handCount = p.handRows[0].length + p.handRows[1].length;
-                const isMe = p.uid === window.user.uid;
-                pBar.innerHTML += `
-                    <div class="player-avatar ${isActive ? 'active-turn shadow-lg shadow-blue-500/20' : 'opacity-70'}">
-                        <span class="text-xs font-bold text-white mb-1 truncate max-w-[80px]">${isMe ? '你' : p.name}</span>
-                        <div class="flex items-center gap-1 bg-black/40 px-2 py-1 rounded">
-                            <svg class="w-3 h-3 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path></svg>
-                            <span class="text-xs font-black ${handCount <= 3 ? 'text-red-400' : 'text-slate-300'}">${handCount}</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            const rackContainer = document.getElementById('rackContainer');
-            const turnOverlay = document.getElementById('turnOverlay');
-            const drawBtn = document.getElementById('drawBtn');
-            const resetTurnBtn = document.getElementById('resetTurnBtn');
-
-            if (isMyTurn) {
-                rackContainer.classList.remove('not-my-turn');
-                turnOverlay.classList.add('hidden');
-                drawBtn.disabled = false;
-                resetTurnBtn.style.display = 'block';
-
-                // Sync local board only if we just started our turn (local state board length matches saved initial board length)
-                // Actually safer to always ensure local state board exists.
-                if (!window.localState.boardMelds || window.localState.boardMelds.length === 0 && window.roomData.boardMelds.length > 0) {
-                     window.localState.boardMelds = JSON.parse(JSON.stringify(window.roomData.boardMelds));
-                     saveTurnState();
-                }
-
-                renderLocalGame();
-            } else {
-                rackContainer.classList.add('not-my-turn');
-                turnOverlay.classList.remove('hidden');
-                const currPlayerName = window.roomData.players[window.roomData.turnIndex].name;
-                document.getElementById('turnOverlayText').innerText = `等待 ${currPlayerName} 操作...`;
-                drawBtn.disabled = true;
-                resetTurnBtn.style.display = 'none';
-                
-                // Keep local board synced with remote while waiting
-                window.localState.boardMelds = JSON.parse(JSON.stringify(window.roomData.boardMelds));
-                renderLocalGame();
-            }
-        }
-
-        // -------------------------------------------------------------
-        // Local Rendering & Interaction 
-        // (Adapted from Original Code to use window.localState)
-        // -------------------------------------------------------------
-
-        function renderLocalGame() {
-            const isMyTurn = window.roomData.players[window.roomData.turnIndex].uid === window.user.uid;
-
-            const totalHandCount = window.localState.handRows[0].length + window.localState.handRows[1].length;
-            document.getElementById('playerHandCount').innerText = totalHandCount;
-            
-            document.querySelectorAll('.sort-btn').forEach(btn => {
-                const mode = btn.id === 'sortRunsBtn' ? 'runs' : 'groups';
-                if (window.localState.sortMode === mode) {
-                    btn.classList.add('bg-blue-500', 'text-white', 'border-blue-400');
-                    btn.classList.remove('bg-white/5', 'text-slate-300');
-                } else {
-                    btn.classList.remove('bg-blue-500', 'text-white', 'border-blue-400');
-                    btn.classList.add('bg-white/5', 'text-slate-300');
-                }
-            });
-
-            const ice = document.getElementById('iceStatus');
-            ice.innerText = window.localState.isBrokenIce ? "已破冰" : "未破冰 (需30分)";
-            ice.className = `text-[9px] font-black px-3 py-1.5 rounded-full border ${window.localState.isBrokenIce ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/30'}`;
-
-            [0, 1].forEach(rIdx => {
-                const rowEl = document.getElementById(`rackRow${rIdx}`);
-                rowEl.innerHTML = '';
-                window.localState.handRows[rIdx].forEach((tile, tIdx) => {
-                    const el = createTileEl(tile);
-                    if(isMyTurn) el.draggable = true;
-                    el.dataset.index = tIdx;
-
-                    if (window.localState.multiSelection && window.localState.multiSelection.rowIdx === rIdx && 
-                        tIdx >= window.localState.multiSelection.startIndex && 
-                        tIdx < window.localState.multiSelection.startIndex + window.localState.multiSelection.count) {
-                        el.classList.add('multi-selected');
-                    }
-                    
-                    if (isMyTurn) {
-                        const handleLongPress = () => { window.localState.pressTimer = setTimeout(() => identifyPotentialMeld(rIdx, tIdx), 600); };
-                        el.onmousedown = handleLongPress; el.onmouseup = () => clearTimeout(window.localState.pressTimer);
-                        el.ontouchstart = handleLongPress; el.ontouchend = () => clearTimeout(window.localState.pressTimer);
-
-                        el.ondragstart = (e) => {
-                            clearTimeout(window.localState.pressTimer);
-                            let tilesToDrag = [];
-                            if (window.localState.multiSelection && window.localState.multiSelection.rowIdx === rIdx && tIdx >= window.localState.multiSelection.startIndex && tIdx < window.localState.multiSelection.startIndex + window.localState.multiSelection.count) {
-                                tilesToDrag = window.localState.handRows[rIdx].slice(window.localState.multiSelection.startIndex, window.localState.multiSelection.startIndex + window.localState.multiSelection.count);
-                                window.localState.draggedItem = { source: 'hand_multi', rowIdx: rIdx, startIndex: window.localState.multiSelection.startIndex, count: window.localState.multiSelection.count, tiles: tilesToDrag };
-                            } else {
-                                window.localState.multiSelection = null; 
-                                tilesToDrag = [tile];
-                                window.localState.draggedItem = { source: 'hand', rowIdx: rIdx, tIdx: tIdx, tile: tile };
-                            }
-                            const ghost = prepareDragGhost(tilesToDrag);
-                            e.dataTransfer.setDragImage(ghost, 20, 30);
-                            el.classList.add('dragging-original');
-                        };
-
-                        el.ondragend = () => { el.classList.remove('dragging-original'); window.localState.multiSelection = null; renderLocalGame(); };
-                    }
-                    rowEl.appendChild(el);
-                    if(tile.isJustDrawn) setTimeout(() => { tile.isJustDrawn = false; }, 500);
-                });
-
-                if(isMyTurn) {
-                    rowEl.ondragover = (e) => e.preventDefault();
-                    rowEl.ondrop = (e) => { e.preventDefault(); handleDropOnRack(e, rIdx); };
-                }
-            });
-
-            const container = document.getElementById('meldContainer');
-            container.innerHTML = '';
-            let currentBoardScore = 0;
-            
-            window.localState.boardMelds.forEach((meld, mIdx) => {
-                const groupEl = document.createElement('div');
-                const isValid = validateMeld(meld);
-                groupEl.className = `meld-group ${isValid ? '' : 'invalid'}`;
-                if (isMyTurn) {
-                    groupEl.ondragover = (e) => e.preventDefault();
-                    groupEl.ondrop = (e) => { e.preventDefault(); handleDropOnMeld(mIdx); };
-                }
-
-                meld.forEach((tile, tIdx) => {
-                    const tEl = createTileEl(tile, true);
-                    if (isMyTurn) {
-                        tEl.draggable = true;
-                        tEl.ondragstart = (e) => {
-                            if (!window.localState.isBrokenIce && !tile.isNew) {
-                                e.preventDefault(); showToast("破冰前禁止操作桌面旧牌", "info"); return;
-                            }
-                            window.localState.draggedItem = { source: 'board', mIdx: mIdx, tIdx: tIdx, tile: tile };
-                            const ghost = prepareDragGhost([tile]);
-                            e.dataTransfer.setDragImage(ghost, 20, 30);
-                        };
-                        
-                        tEl.onclick = () => {
-                            if (!tile.isNew && !window.localState.isBrokenIce) return showToast("未破冰不可取回旧牌", "info");
-                            const recovered = window.localState.boardMelds[mIdx].splice(tIdx, 1)[0];
-                            recovered.isJustDrawn = true; 
-                            addTileToHand(recovered);
-                            window.localState.boardMelds = window.localState.boardMelds.filter(m => m.length > 0);
-                            renderLocalGame();
-                        };
-                    }
-                    groupEl.appendChild(tEl);
-                    if (tile.isNew && isMyTurn) {
-                        currentBoardScore += (tile.type === 'joker' ? 10 : (typeof tile.value === 'number' ? tile.value : 0));
-                    }
-                });
-                container.appendChild(groupEl);
-            });
-
-            if (isMyTurn) {
-                const placeholder = document.createElement('div');
-                placeholder.className = 'meld-group border-dashed border-white/10 justify-center items-center text-[10px] text-white/20 uppercase font-bold h-[80px] cursor-pointer hover:bg-white/5';
-                placeholder.innerText = '+ 新牌组';
-                placeholder.onclick = () => { window.localState.boardMelds.push([]); renderLocalGame(); };
-                placeholder.ondrop = (e) => { e.preventDefault(); window.localState.boardMelds.push([]); handleDropOnMeld(window.localState.boardMelds.length - 1); };
-                placeholder.ondragover = (e) => e.preventDefault();
-                container.appendChild(placeholder);
-                
-                const scoreHint = document.getElementById('scoreHint');
-                scoreHint.innerText = `出分: ${currentBoardScore}`;
-                const btn = document.getElementById('finishBtn');
-                const hasNewOnBoard = window.localState.boardMelds.some(m => m.some(t => t.isNew));
-                const canFinish = (currentBoardScore >= 30 || window.localState.isBrokenIce) && hasNewOnBoard;
-                
-                if (canFinish) {
-                    btn.className = `flex-[3] rounded-xl font-black transition-all active:scale-95 flex flex-col items-center justify-center shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-500/20`;
-                    btn.disabled = false;
-                } else {
-                    btn.className = `flex-[3] rounded-xl font-black transition-all flex flex-col items-center justify-center bg-slate-700 opacity-50 cursor-not-allowed`;
-                    btn.disabled = true;
-                }
-            }
-        }
-
-        function createTileEl(tile, onBoard = false) {
-            const div = document.createElement('div');
-            const statusClass = onBoard ? (tile.isNew ? 'new-tile' : 'locked-tile') : (tile.isNew ? 'new-tile' : '');
-            const animClass = tile.isJustDrawn ? 'tile-draw-anim' : '';
-            div.className = `rummi-tile ${tile.color} ${onBoard ? 'on-board' : ''} ${statusClass} ${animClass}`;
-            div.innerHTML = tile.type === 'joker' ? '<span class="text-3xl">☻</span>' : tile.value;
-            return div;
-        }
-
-        function prepareDragGhost(tiles) {
-            const container = document.getElementById('drag-ghost-container');
-            container.innerHTML = '';
-            tiles.forEach((tile, i) => {
-                const ghost = document.createElement('div');
-                ghost.className = `ghost-tile ${tile.color}`;
-                ghost.innerHTML = tile.type === 'joker' ? '☻' : tile.value;
-                ghost.style.left = `${i * 12}px`; ghost.style.top = `${i * 4}px`; ghost.style.zIndex = 100 - i;
-                container.appendChild(ghost);
-            });
-            return container;
-        }
-
-        function addTileToHand(tile) {
-            tile.isNew = false; 
-            window.localState.handRows[1].push(tile);
-            if (window.localState.sortMode !== 'manual') applyCurrentSort();
-        }
-
-        window.setSortMode = function(mode) {
-            if (window.localState.sortMode === mode) window.localState.sortMode = 'manual';
-            else window.localState.sortMode = mode;
-            if (window.localState.sortMode !== 'manual') applyCurrentSort();
-            renderLocalGame();
+            window.localState.handRows = JSON.parse(JSON.stringify(me.handRows));
+            window.localState.isBrokenIce = me.hasBrokenIce;
+            window.localState.boardMelds = JSON.parse(JSON.stringify(window.roomData.boardMelds));
+            saveState();
+            render();
         };
 
-        function applyCurrentSort() {
-            let all = [...window.localState.handRows[0], ...window.localState.handRows[1]];
-            if (window.localState.sortMode === 'runs') {
-                all.sort((a,b) => (a.type==='joker')-(b.type==='joker') || COLOR_ORDER[a.color]-COLOR_ORDER[b.color] || a.value-b.value);
-            } else if (window.localState.sortMode === 'groups') {
-                all.sort((a,b) => (a.type==='joker')-(b.type==='joker') || a.value-b.value || COLOR_ORDER[a.color]-COLOR_ORDER[b.color]);
-            }
-            window.localState.handRows[0] = all.slice(0, Math.min(all.length, MAX_PER_ROW));
-            window.localState.handRows[1] = all.slice(window.localState.handRows[0].length);
-        }
+        const saveState = () => {
+            window.localState.initialHandState = JSON.parse(JSON.stringify(window.localState.handRows));
+            window.localState.initialBoardState = JSON.parse(JSON.stringify(window.localState.boardMelds));
+        };
 
-        function handleDropOnMeld(targetMIdx) {
-            if (!window.localState.draggedItem) return;
-            const { source, rowIdx, mIdx, tIdx, tile, tiles, startIndex, count } = window.localState.draggedItem;
-
-            if (source === 'hand') {
-                window.localState.handRows[rowIdx].splice(tIdx, 1);
-                tile.isNew = true; window.localState.boardMelds[targetMIdx].push(tile);
-            } else if (source === 'hand_multi') {
-                window.localState.handRows[rowIdx].splice(startIndex, count);
-                tiles.forEach(t => t.isNew = true); window.localState.boardMelds[targetMIdx].push(...tiles);
-            } else if (source === 'board') {
-                window.localState.boardMelds[mIdx].splice(tIdx, 1);
-                window.localState.boardMelds[targetMIdx].push(tile);
-            }
+        const syncGameUI = () => {
+            const turnInfo = window.roomData.players[window.roomData.turnIndex];
+            const isMe = turnInfo.uid === window.user.uid;
             
-            window.localState.boardMelds[targetMIdx] = sortMeld(window.localState.boardMelds[targetMIdx]);
+            document.getElementById('deckCount').innerText = window.roomData.deck.length;
+            document.getElementById('turnOverlay').classList.toggle('hidden', isMe);
+            document.getElementById('turnOverlayText').innerText = isMe ? "" : `等待 ${turnInfo.name} 操作...`;
+            
+            if (!isMe) window.localState.boardMelds = JSON.parse(JSON.stringify(window.roomData.boardMelds));
+            render();
+        };
+
+        const render = () => {
+            const isMe = window.roomData.players[window.roomData.turnIndex].uid === window.user.uid;
+            const rackEl0 = document.getElementById('rackRow0');
+            const rackEl1 = document.getElementById('rackRow1');
+            const boardEl = document.getElementById('meldContainer');
+
+            [rackEl0, rackEl1].forEach((el, idx) => {
+                el.innerHTML = '';
+                window.localState.handRows[idx].forEach((t, tIdx) => {
+                    const tileDiv = createTileEl(t);
+                    tileDiv.draggable = isMe;
+                    tileDiv.ondragstart = (e) => {
+                        window.localState.draggedItem = { from: 'hand', row: idx, index: tIdx, tile: t };
+                    };
+                    el.appendChild(tileDiv);
+                });
+                el.ondragover = e => e.preventDefault();
+                el.ondrop = e => handleDrop(e, 'hand', idx);
+            });
+
+            boardEl.innerHTML = '';
+            window.localState.boardMelds.forEach((meld, mIdx) => {
+                const group = document.createElement('div');
+                group.className = `meld-group ${validateMeld(meld) ? '' : 'invalid'}`;
+                meld.forEach((t, tIdx) => {
+                    const tileDiv = createTileEl(t, true);
+                    tileDiv.draggable = isMe;
+                    tileDiv.ondragstart = () => {
+                        window.localState.draggedItem = { from: 'board', mIdx, tIdx, tile: t };
+                    };
+                    group.appendChild(tileDiv);
+                });
+                group.ondragover = e => e.preventDefault();
+                group.ondrop = e => handleDrop(e, 'board', mIdx);
+                boardEl.appendChild(group);
+            });
+
+            // 新牌组占位
+            if (isMe) {
+                const plus = document.createElement('div');
+                plus.className = "meld-group border-dashed border-white/20 justify-center items-center text-xs opacity-30 h-20 cursor-pointer";
+                plus.innerText = "+ 新牌组";
+                plus.onclick = () => { window.localState.boardMelds.push([]); render(); };
+                plus.ondragover = e => e.preventDefault();
+                plus.ondrop = () => { window.localState.boardMelds.push([]); handleDrop(null, 'board', window.localState.boardMelds.length-1); };
+                boardEl.appendChild(plus);
+            }
+
+            // 更新分值和按钮状态
+            let score = 0;
+            window.localState.boardMelds.forEach(m => m.forEach(t => { if(t.isNew) score += (t.type==='joker'?10:t.value); }));
+            document.getElementById('scoreHint').innerText = `出分: ${score}`;
+            document.getElementById('playerHandCount').innerText = window.localState.handRows[0].length + window.localState.handRows[1].length;
+            
+            const finishBtn = document.getElementById('finishBtn');
+            const hasNew = window.localState.boardMelds.some(m => m.some(t => t.isNew));
+            if (isMe && hasNew && (window.localState.isBrokenIce || score >= 30) && window.localState.boardMelds.every(m => m.length === 0 || validateMeld(m))) {
+                finishBtn.classList.replace('bg-slate-700', 'bg-blue-600');
+                finishBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                finishBtn.disabled = false;
+            } else {
+                finishBtn.classList.replace('bg-blue-600', 'bg-slate-700');
+                finishBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                finishBtn.disabled = true;
+            }
+        };
+
+        const handleDrop = (e, to, targetIdx) => {
+            const item = window.localState.draggedItem;
+            if (!item) return;
+
+            if (item.from === 'hand') window.localState.handRows[item.row].splice(item.index, 1);
+            else window.localState.boardMelds[item.mIdx].splice(item.tIdx, 1);
+
+            if (to === 'hand') {
+                item.tile.isNew = false;
+                window.localState.handRows[targetIdx].push(item.tile);
+            } else {
+                item.tile.isNew = true;
+                window.localState.boardMelds[targetIdx].push(item.tile);
+                window.localState.boardMelds[targetIdx].sort((a,b) => a.value - b.value);
+            }
             window.localState.boardMelds = window.localState.boardMelds.filter(m => m.length > 0);
             window.localState.draggedItem = null;
-            renderLocalGame();
-        }
+            render();
+        };
 
-        function handleDropOnRack(e, targetRowIdx) {
-            if (!window.localState.draggedItem) return;
-            const { source, rowIdx, mIdx, tIdx, tile, tiles, startIndex, count } = window.localState.draggedItem;
-
-            let insertIdx = window.localState.handRows[targetRowIdx].length;
-            const targetEl = e.target.closest('.rummi-tile');
-            if (targetEl && targetEl.parentElement.dataset.row == targetRowIdx) {
-                const rect = targetEl.getBoundingClientRect();
-                const midX = rect.left + rect.width / 2;
-                const idx = parseInt(targetEl.dataset.index);
-                insertIdx = e.clientX < midX ? idx : idx + 1;
-            }
-
-            if (source.startsWith('hand')) {
-                const originIdx = source === 'hand_multi' ? startIndex : tIdx;
-                const removed = window.localState.handRows[rowIdx].splice(originIdx, source === 'hand_multi' ? count : 1);
-                let actualInsert = insertIdx;
-                if (rowIdx === targetRowIdx && originIdx < insertIdx) actualInsert -= removed.length;
-                window.localState.handRows[targetRowIdx].splice(Math.max(0, actualInsert), 0, ...removed);
-                window.localState.sortMode = 'manual';
-            } else {
-                window.localState.boardMelds[mIdx].splice(tIdx, 1);
-                tile.isNew = false; 
-                window.localState.handRows[targetRowIdx].splice(insertIdx, 0, tile);
-                window.localState.boardMelds = window.localState.boardMelds.filter(m => m.length > 0);
-                if (window.localState.sortMode !== 'manual') applyCurrentSort();
-            }
-
-            window.localState.draggedItem = null;
-            renderLocalGame();
-        }
-
-        function identifyPotentialMeld(rowIdx, startIndex) {
-            const row = window.localState.handRows[rowIdx];
-            let bestLen = 0;
-            for (let len = 3; len <= row.length - startIndex; len++) {
-                if (validateMeld(row.slice(startIndex, startIndex + len))) bestLen = len;
-            }
-            if (bestLen >= 3) {
-                window.localState.multiSelection = { rowIdx, startIndex, count: bestLen };
-                showToast("已选中合法组", "info"); renderLocalGame();
-            }
-        }
-
-        window.resetTurn = function() {
-            window.localState.boardMelds = JSON.parse(JSON.stringify(window.localState.initialBoardState || window.roomData.boardMelds));
+        window.handleDraw = async () => {
+            window.localState.boardMelds = JSON.parse(JSON.stringify(window.localState.initialBoardState));
             window.localState.handRows = JSON.parse(JSON.stringify(window.localState.initialHandState));
-            renderLocalGame();
-            showToast("已恢复本回合初始状态", "info");
-        };
-
-        // -------------------------------------------------------------
-        // Server Sync Actions
-        // -------------------------------------------------------------
-
-        window.handleDraw = async function() {
-            if (window.roomData.players[window.roomData.turnIndex].uid !== window.user.uid) return;
-
-            let hasNewOnBoard = window.localState.boardMelds.some(m => m.some(t => t.isNew));
-            if (hasNewOnBoard || !window.localState.boardMelds.every(m => m.length === 0 || validateMeld(m))) {
-                // If board is altered or invalid, revert everything before drawing
-                window.localState.boardMelds = JSON.parse(JSON.stringify(window.roomData.boardMelds));
-                window.localState.handRows = JSON.parse(JSON.stringify(window.localState.initialHandState));
-            }
-            
-            let remoteDeck = [...window.roomData.deck];
-            if (remoteDeck.length > 0) {
-                const t = remoteDeck.pop();
-                t.isNew = false; t.isJustDrawn = true;
-                
+            let deck = [...window.roomData.deck];
+            if (deck.length > 0) {
+                const t = deck.pop();
                 window.localState.handRows[1].push(t);
-                if (window.localState.sortMode !== 'manual') applyCurrentSort();
-                
-                await commitTurnToFirebase(remoteDeck, window.localState.boardMelds);
-            } else {
-                showToast("牌堆已空，无法摸牌", "error");
+                await commit(deck);
             }
         };
 
-        window.finishTurn = async function() {
-            if (window.roomData.players[window.roomData.turnIndex].uid !== window.user.uid) return;
-            if (!window.localState.boardMelds.every(m => m.length === 0 || validateMeld(m))) return showToast("桌上有非法牌组", "error");
-            
-            let newScore = 0;
-            window.localState.boardMelds.forEach(m => m.forEach(t => { if(t.isNew) newScore += (t.type==='joker'?10:t.value); }));
-            
-            if (!window.localState.isBrokenIce) {
-                if (newScore < 30) return showToast(`破冰需至少30分 (当前: ${newScore})`, "error");
-                window.localState.isBrokenIce = true;
-            }
-
-            // Clear 'isNew' tags
+        window.finishTurn = async () => {
+            window.localState.isBrokenIce = true;
             window.localState.boardMelds.forEach(m => m.forEach(t => t.isNew = false));
-            window.localState.handRows.forEach(r => r.forEach(t => t.isNew = false));
-
-            await commitTurnToFirebase(window.roomData.deck, window.localState.boardMelds);
+            await commit(window.roomData.deck);
         };
 
-        async function commitTurnToFirebase(newDeck, newBoardMelds) {
-            const roomRef = getRoomDocRef(window.currentRoomId);
-            let players = [...window.roomData.players];
-            
-            const myIndex = window.roomData.turnIndex;
-            players[myIndex].handRows = window.localState.handRows;
-            players[myIndex].hasBrokenIce = window.localState.isBrokenIce;
+        const commit = async (newDeck) => {
+            const players = [...window.roomData.players];
+            players[window.roomData.turnIndex].handRows = window.localState.handRows;
+            players[window.roomData.turnIndex].hasBrokenIce = window.localState.isBrokenIce;
 
-            const myHandCount = window.localState.handRows[0].length + window.localState.handRows[1].length;
-            let status = window.roomData.status;
-            let winnerId = window.roomData.winnerId;
-
-            if (myHandCount === 0) {
-                status = 'finished';
-                winnerId = window.user.uid;
-            }
-
-            let nextTurnIndex = (myIndex + 1) % players.length;
-
-            await updateDoc(roomRef, {
+            const isWin = (window.localState.handRows[0].length + window.localState.handRows[1].length) === 0;
+            await updateDoc(getRoomDocRef(window.currentRoomId), {
                 deck: newDeck,
-                boardMelds: newBoardMelds,
+                boardMelds: window.localState.boardMelds,
                 players: players,
-                turnIndex: nextTurnIndex,
-                status: status,
-                winnerId: winnerId,
+                turnIndex: (window.roomData.turnIndex + 1) % players.length,
+                status: isWin ? 'finished' : 'playing',
+                winnerId: isWin ? window.user.uid : null,
                 lastUpdated: Date.now()
             });
+            saveState();
+        };
 
-            saveTurnState(true); // Update local initials
-        }
+        window.resetTurn = () => {
+            window.localState.handRows = JSON.parse(JSON.stringify(window.localState.initialHandState));
+            window.localState.boardMelds = JSON.parse(JSON.stringify(window.localState.initialBoardState));
+            render();
+        };
 
-        // -------------------------------------------------------------
-        // Helpers
-        // -------------------------------------------------------------
+        const createTileEl = (t, onBoard=false) => {
+            const d = document.createElement('div');
+            d.className = `rummi-tile ${t.color} ${onBoard ? 'on-board' : ''} ${t.isNew ? 'new-tile' : (onBoard ? 'locked-tile' : '')}`;
+            d.innerHTML = t.type === 'joker' ? '☻' : t.value;
+            return d;
+        };
 
-        function validateMeld(meld) {
-            if (meld.length < 3) return false;
-            const nums = meld.filter(t => t.type === 'number');
-            const jokers = meld.filter(t => t.type === 'joker');
-            
-            if (meld.length <= 4) {
-                const val = nums[0]?.value;
-                const colors = new Set(nums.map(n => n.color));
-                if (nums.every(n => n.value === val) && colors.size === nums.length) return true;
+        const validateMeld = (m) => {
+            if (m.length < 3) return false;
+            const nums = m.filter(x => x.type === 'number');
+            if (new Set(nums.map(x => x.color)).size === 1) {
+                const v = nums.map(x => x.value).sort((a,b)=>a-b);
+                for(let i=0; i<v.length-1; i++) if(v[i+1]-v[i] !== 1) return false;
+                return true;
             }
-            
-            const colors = new Set(nums.map(n => n.color));
-            if (colors.size === 1) {
-                const sorted = [...nums].sort((a,b) => a.value - b.value);
-                if (new Set(sorted.map(s=>s.value)).size !== sorted.length) return false;
-                let gaps = 0;
-                for(let i=0; i<sorted.length-1; i++) gaps += (sorted[i+1].value - sorted[i].value - 1);
-                if (gaps <= jokers.length) return true;
+            if (nums.length <= 4 && new Set(nums.map(x => x.value)).size === 1) {
+                return new Set(nums.map(x => x.color)).size === nums.length;
             }
             return false;
-        }
+        };
 
-        function sortMeld(meld) {
-            const nums = meld.filter(t => t.type === 'number');
-            const jokers = meld.filter(t => t.type === 'joker');
-            if (nums.length === 0) return jokers;
-            if (nums.every(n => n.value === nums[0].value)) nums.sort((a,b) => COLOR_ORDER[a.color] - COLOR_ORDER[b.color]);
-            else nums.sort((a, b) => a.value - b.value);
-            return [...nums, ...jokers];
-        }
+        const showToast = (m) => {
+            const t = document.createElement('div');
+            t.className = "fixed top-10 left-1/2 -translate-x-1/2 bg-red-600 px-6 py-3 rounded-full text-white z-[999] animate-pop";
+            t.innerText = m;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2000);
+        };
 
-        function showToast(msg, type="error") {
-            const announcer = document.getElementById('announcer');
-            const toast = document.createElement('div');
-            const colors = { error: 'bg-red-500', success: 'bg-green-500', info: 'bg-blue-600' };
-            toast.className = `fixed top-20 left-1/2 -translate-x-1/2 px-6 py-3 rounded-2xl shadow-2xl z-[100] text-white text-xs font-black animate-pop border border-white/20 ${colors[type]}`;
-            toast.innerText = msg;
-            announcer.appendChild(toast);
-            setTimeout(() => toast.remove(), 2500);
-        }
-
-        function showWinnerModal(winnerName) {
-            const modal = document.createElement('div');
-            modal.className = "fixed inset-0 bg-black/80 z-[999] flex flex-col items-center justify-center backdrop-blur-sm";
-            modal.innerHTML = `
-                <div class="bg-gradient-to-b from-blue-900 to-slate-900 p-10 rounded-3xl border border-blue-500/30 text-center shadow-2xl animate-pop flex flex-col items-center">
-                    <span class="text-6xl mb-4">🏆</span>
-                    <h2 class="text-3xl font-black text-white mb-2">游戏结束</h2>
-                    <p class="text-lg text-blue-300 font-bold mb-8"><span class="text-white text-xl">${winnerName}</span> 赢得了这局比赛！</p>
-                    <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-full transition-all active:scale-95 shadow-lg">返回大厅</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
+        const showWinnerModal = (n) => {
+            const m = document.createElement('div');
+            m.className = "fixed inset-0 bg-black/90 z-[999] flex flex-col items-center justify-center";
+            m.innerHTML = `<h2 class="text-4xl font-black text-blue-400 mb-4">🏆 ${n} 获胜！</h2><button onclick="location.reload()" class="bg-blue-600 px-8 py-3 rounded-full">返回</button>`;
+            document.body.appendChild(m);
+        };
 
     </script>
 </body>
