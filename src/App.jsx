@@ -1,6 +1,6 @@
 /* global __firebase_config, __app_id, __initial_auth_token */
-import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
+import React, { useState, useEffect, useMemo } from 'react';
+import { initializeApp, getApps } from 'firebase/app';
 import { 
   getAuth, 
   signInAnonymously, 
@@ -16,29 +16,38 @@ import {
   onSnapshot, 
   updateDoc, 
   deleteDoc, 
-  arrayUnion
+  arrayUnion,
+  query
 } from 'firebase/firestore';
 import { 
   Users, 
   Plus, 
   LogOut, 
-  Play, 
   Trophy, 
   ChevronRight,
   RefreshCw,
-  Hash,
   LayoutGrid,
   AlertCircle
 } from 'lucide-react';
 
-// --- Firebase Configuration ---
-const firebaseConfig = JSON.parse(__firebase_config);
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'rummikub-pro-v1';
+// --- 安全初始化函数 ---
+const initFirebase = () => {
+  try {
+    const config = JSON.parse(__firebase_config);
+    const app = getApps().length === 0 ? initializeApp(config) : getApps()[0];
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'rummikub-v1';
+    return { auth, db, appId, available: true };
+  } catch (e) {
+    console.error("Firebase config error:", e);
+    return { available: false, error: e.message };
+  }
+};
 
-// --- Game Constants ---
+const fb = initFirebase();
+
+// --- 游戏逻辑常量 ---
 const COLORS = ['red', 'blue', 'orange', 'black'];
 const NUMBERS = Array.from({ length: 13 }, (_, i) => i + 1);
 
@@ -65,70 +74,78 @@ export default function App() {
   const [error, setError] = useState(null);
   const [inputID, setInputID] = useState('');
 
-  // 1. Auth Logic (Rule 3: Auth First)
+  // 1. 身份验证逻辑
   useEffect(() => {
-    const initAuth = async () => {
+    if (!fb.available) {
+      setError("Firebase 配置加载失败，请检查环境。");
+      setLoading(false);
+      return;
+    }
+
+    const startAuth = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
+          await signInWithCustomToken(fb.auth, __initial_auth_token);
         } else {
-          await signInAnonymously(auth);
+          await signInAnonymously(fb.auth);
         }
       } catch (err) {
-        console.error("Auth Error:", err);
-        setError("身份验证失败。");
+        console.error("Auth Failure:", err);
+        setError("登录失败: " + err.message);
       }
     };
-    initAuth();
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
+
+    startAuth();
+    const unsubscribe = onAuthStateChanged(fb.auth, (u) => {
       setUser(u);
       setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
-  // 2. Public Rooms Listener (Rule 1: Path Structure)
+  // 2. 房间列表监听
   useEffect(() => {
-    if (!user) return;
-    const roomsCol = collection(db, 'artifacts', appId, 'public', 'data', 'rooms');
-    const unsubscribe = onSnapshot(roomsCol, (snapshot) => {
-      const roomList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setRooms(roomList);
+    if (!user || !fb.available) return;
+    const roomsCol = collection(fb.db, 'artifacts', fb.appId, 'public', 'data', 'rooms');
+    const q = query(roomsCol); // 简单查询，Rule 2
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setRooms(list);
     }, (err) => {
-      console.error("Rooms error:", err);
+      console.error("Snapshot error:", err);
     });
     return () => unsubscribe();
   }, [user]);
 
-  // 3. Game State Listener
+  // 3. 游戏状态同步
   useEffect(() => {
-    if (!user || !currentRoomId) {
+    if (!user || !currentRoomId || !fb.available) {
       setGameState(null);
       return;
     }
-    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
+    const roomRef = doc(fb.db, 'artifacts', fb.appId, 'public', 'data', 'rooms', currentRoomId);
     const unsubscribe = onSnapshot(roomRef, (docSnap) => {
       if (docSnap.exists()) {
         setGameState(docSnap.data());
       } else {
         setCurrentRoomId(null);
-        setGameState(null);
       }
     }, (err) => {
-      console.error("Sync error:", err);
+      console.error("Room sync error:", err);
+      setError("同步房间状态失败");
     });
     return () => unsubscribe();
   }, [user, currentRoomId]);
 
-  // Actions
-  const createRoom = async () => {
+  // 动作处理
+  const handleCreateRoom = async () => {
     if (!user) return;
-    const roomId = Math.random().toString(36).substring(7).toUpperCase();
-    const newRoom = {
-      id: roomId,
+    const rid = Math.random().toString(36).substring(7).toUpperCase();
+    const roomData = {
+      id: rid,
       hostId: user.uid,
-      hostName: `玩家-${user.uid.slice(0, 4)}`,
-      players: [{ uid: user.uid, name: `玩家-${user.uid.slice(0, 4)}`, hand: [] }],
+      hostName: `Player-${user.uid.slice(0, 4)}`,
+      players: [{ uid: user.uid, name: `Player-${user.uid.slice(0, 4)}`, hand: [] }],
       status: 'waiting',
       board: [],
       deck: [],
@@ -136,310 +153,234 @@ export default function App() {
       createdAt: Date.now()
     };
     try {
-      await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'rooms', roomId), newRoom);
-      setCurrentRoomId(roomId);
-    } catch (err) {
-      setError("创建失败: " + err.message);
+      await setDoc(doc(fb.db, 'artifacts', fb.appId, 'public', 'data', 'rooms', rid), roomData);
+      setCurrentRoomId(rid);
+    } catch (e) {
+      setError("创建房间失败");
     }
   };
 
-  const joinRoom = async (roomId) => {
-    if (!user || !roomId) return;
-    const rid = roomId.toUpperCase();
-    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', rid);
-    
+  const handleJoinRoom = async (id) => {
+    if (!id || !user) return;
+    const targetId = id.trim().toUpperCase();
+    const ref = doc(fb.db, 'artifacts', fb.appId, 'public', 'data', 'rooms', targetId);
     try {
-      const snap = await getDoc(roomRef);
+      const snap = await getDoc(ref);
       if (!snap.exists()) {
-        setError("房间不存在");
+        setError("找不到该房间");
         return;
       }
       const data = snap.data();
       if (data.players.some(p => p.uid === user.uid)) {
-        setCurrentRoomId(rid);
+        setCurrentRoomId(targetId);
         return;
       }
       if (data.players.length >= 4) {
         setError("房间已满");
         return;
       }
-
-      await updateDoc(roomRef, {
-        players: arrayUnion({ uid: user.uid, name: `玩家-${user.uid.slice(0, 4)}`, hand: [] })
+      await updateDoc(ref, {
+        players: arrayUnion({ uid: user.uid, name: `Player-${user.uid.slice(0, 4)}`, hand: [] })
       });
-      setCurrentRoomId(rid);
-    } catch (err) {
-      setError("无法加入: " + err.message);
+      setCurrentRoomId(targetId);
+    } catch (e) {
+      setError("加入失败");
     }
   };
 
-  const startGame = async () => {
-    if (!gameState || gameState.hostId !== user.uid) return;
-    const fullDeck = generateDeck();
-    const updatedPlayers = gameState.players.map(p => ({
-      ...p,
-      hand: fullDeck.splice(0, 14)
-    }));
-
-    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
-    await updateDoc(roomRef, {
-      status: 'playing',
-      deck: fullDeck,
-      players: updatedPlayers,
-      turnIndex: 0
-    });
-  };
-
-  const drawTile = async () => {
-    if (!gameState || !user) return;
-    const players = gameState.players || [];
-    const turnIndex = gameState.turnIndex || 0;
-    const currentPlayer = players[turnIndex];
-    
-    if (currentPlayer?.uid !== user.uid) return;
-    if (!gameState.deck || gameState.deck.length === 0) return;
-
-    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
-    const newDeck = [...gameState.deck];
-    const tile = newDeck.pop();
-    
-    const newPlayers = players.map(p => {
-      if (p.uid === user.uid) {
-        return { ...p, hand: [...(p.hand || []), tile] };
-      }
-      return p;
-    });
-
-    await updateDoc(roomRef, {
-      deck: newDeck,
-      players: newPlayers,
-      turnIndex: (turnIndex + 1) % players.length
-    });
-  };
-
-  const leaveRoom = async () => {
-    if (!currentRoomId || !user) return;
-    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
-    try {
-      if (gameState?.hostId === user.uid) {
-        await deleteDoc(roomRef);
-      } else if (gameState) {
-        const filteredPlayers = gameState.players.filter(p => p.uid !== user.uid);
-        await updateDoc(roomRef, { players: filteredPlayers });
-      }
-      setCurrentRoomId(null);
-    } catch (err) {
-      setCurrentRoomId(null);
-    }
-  };
-
-  // Helper Components
-  const Tile = ({ tile, size = "md", onClick }) => {
+  // 渲染帮助组件
+  const Tile = ({ tile, size = "md" }) => {
     if (!tile) return null;
-    const isJoker = tile.type === 'joker';
-    const colorMap = {
-      red: 'text-red-500 border-red-500',
-      blue: 'text-blue-500 border-blue-500',
-      orange: 'text-orange-400 border-orange-400',
-      black: 'text-zinc-800 border-zinc-800',
-      joker: 'text-purple-600 border-purple-500'
+    const colorClasses = {
+      red: 'text-red-600 border-red-200',
+      blue: 'text-blue-600 border-blue-200',
+      orange: 'text-orange-500 border-orange-200',
+      black: 'text-slate-900 border-slate-300',
+      joker: 'text-purple-600 border-purple-200 bg-purple-50'
     };
-    const sizeClasses = {
-      sm: 'w-8 h-10 text-xs',
-      md: 'w-10 h-14 text-lg',
-      lg: 'w-12 h-16 text-xl'
-    };
-
     return (
-      <div 
-        onClick={onClick}
-        className={`${sizeClasses[size]} bg-amber-50 rounded-md border-2 shadow-sm flex flex-col items-center justify-center font-bold cursor-pointer hover:scale-105 transition-transform select-none ${colorMap[tile.color] || 'text-gray-400'}`}
-      >
-        {isJoker ? '☺' : tile.number}
+      <div className={`
+        ${size === 'sm' ? 'w-8 h-10 text-sm' : 'w-11 h-16 text-xl'}
+        bg-white border-2 rounded-lg flex flex-col items-center justify-center font-black shadow-sm
+        ${colorClasses[tile.color] || 'text-gray-400'}
+      `}>
+        {tile.type === 'joker' ? '★' : tile.number}
       </div>
     );
   };
 
-  if (loading) return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white">
-      <RefreshCw className="animate-spin mb-4" size={32} />
-      <p>正在初始化环境...</p>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-slate-900 flex flex-col items-center justify-center text-white p-4">
+        <RefreshCw className="animate-spin mb-4 text-orange-500" size={40} />
+        <p className="animate-pulse">正在准备游戏环境...</p>
+      </div>
+    );
+  }
 
-  // Safety variables
-  const players = gameState?.players || [];
-  const currentPlayer = players[gameState?.turnIndex || 0];
-  const myData = players.find(p => p.uid === user?.uid);
+  if (error && !user) {
+    return (
+      <div className="fixed inset-0 bg-slate-900 flex flex-col items-center justify-center text-white p-6 text-center">
+        <AlertCircle className="text-red-500 mb-4" size={60} />
+        <h2 className="text-xl font-bold mb-2">系统启动失败</h2>
+        <p className="text-slate-400 mb-6 max-w-md">{error}</p>
+        <button onClick={() => window.location.reload()} className="bg-slate-700 px-6 py-2 rounded-xl">重试</button>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8">
-      {error && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-red-500 text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-2">
-          <AlertCircle size={18} />
-          <span>{error}</span>
-          <button onClick={() => setError(null)} className="ml-2 font-bold">×</button>
-        </div>
-      )}
-
-      <header className="max-w-6xl mx-auto flex justify-between items-center mb-8">
-        <div className="flex items-center gap-3">
-          <div className="bg-orange-500 p-2 rounded-xl shadow-lg">
-            <LayoutGrid className="text-slate-900" size={24} />
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans">
+      {/* 顶部导航 */}
+      <nav className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-slate-950/50 backdrop-blur-md sticky top-0 z-40">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+            <LayoutGrid size={20} className="text-white" />
           </div>
-          <h1 className="text-xl font-black">RUMMIKUB PRO</h1>
+          <span className="font-black tracking-tighter text-lg">RUMMIKUB<span className="text-orange-500 italic">PRO</span></span>
         </div>
         {user && (
-          <div className="text-xs opacity-50 font-mono">USER: {user.uid.slice(0, 8)}</div>
+          <div className="flex items-center gap-4 text-xs font-mono text-slate-500">
+            <span className="hidden sm:inline">UID: {user.uid.slice(0, 8)}</span>
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          </div>
         )}
-      </header>
+      </nav>
 
-      <main className="max-w-6xl mx-auto">
-        {!currentRoomId || !gameState ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold">游戏大厅</h2>
-                <button onClick={createRoom} className="bg-orange-500 hover:bg-orange-400 px-6 py-2 rounded-xl font-bold flex items-center gap-2 transition-all">
-                  <Plus size={20} /> 创建房间
-                </button>
+      <main className="max-w-6xl mx-auto p-4 md:p-8">
+        {!currentRoomId ? (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gradient-to-br from-orange-500 to-red-600 p-8 rounded-3xl shadow-2xl shadow-orange-500/20 group overflow-hidden relative">
+                <div className="relative z-10">
+                  <h2 className="text-3xl font-black mb-2 italic">准备好了吗？</h2>
+                  <p className="text-white/80 mb-6">创建一个新房间，邀请好友或等待路人加入。</p>
+                  <button onClick={handleCreateRoom} className="bg-white text-orange-600 px-8 py-3 rounded-2xl font-bold hover:scale-105 transition-transform flex items-center gap-2 shadow-lg">
+                    <Plus size={20} /> 创建房间
+                  </button>
+                </div>
+                <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform">
+                  <LayoutGrid size={160} />
+                </div>
               </div>
 
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  value={inputID}
-                  onChange={(e) => setInputID(e.target.value)}
-                  placeholder="输入 房间ID 加入..."
-                  className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 uppercase"
-                />
-                <button onClick={() => joinRoom(inputID)} className="bg-slate-800 px-6 rounded-xl font-bold">加入</button>
+              <div className="bg-slate-900 border border-white/5 p-8 rounded-3xl flex flex-col justify-center">
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <Users className="text-orange-500" size={24} /> 快速加入
+                </h3>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder="输入 6 位房间 ID..."
+                    className="flex-1 bg-black/40 border border-white/10 rounded-2xl px-5 py-3 focus:border-orange-500 transition-colors uppercase outline-none"
+                    value={inputID}
+                    onChange={(e) => setInputID(e.target.value)}
+                  />
+                  <button onClick={() => handleJoinRoom(inputID)} className="bg-slate-800 hover:bg-slate-700 px-6 rounded-2xl font-bold">加入</button>
+                </div>
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  <RefreshCw size={18} className="text-orange-500" /> 正在等待的对局
+                </h3>
+                <span className="text-xs text-slate-500">{rooms.length} 个活跃房间</span>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {rooms.length === 0 ? (
-                  <div className="col-span-full py-12 text-center bg-slate-900/30 rounded-3xl border border-dashed border-slate-800 text-slate-500">
-                    暂无活跃房间
+                  <div className="col-span-full py-20 bg-white/5 rounded-3xl border border-dashed border-white/10 flex flex-col items-center justify-center text-slate-500">
+                    <p>目前还没有房间，去创建一个吧！</p>
                   </div>
                 ) : (
                   rooms.map(room => (
-                    <div key={room.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="text-xs font-mono text-orange-400">#{room.id}</span>
-                        <span className="text-[10px] bg-slate-800 px-2 py-1 rounded uppercase font-bold text-slate-400">
-                          {room.status === 'playing' ? '进行中' : '等待中'}
-                        </span>
+                    <div key={room.id} className="bg-slate-900/50 border border-white/5 p-6 rounded-2xl hover:bg-slate-900 transition-colors group">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <p className="text-[10px] text-orange-500 font-mono tracking-widest uppercase mb-1">Room ID: {room.id}</p>
+                          <h4 className="font-bold text-lg">{room.hostName || '房主'}</h4>
+                        </div>
+                        <div className="flex items-center gap-1 bg-black/40 px-2 py-1 rounded text-xs">
+                          <Users size={12} /> {room.players?.length || 0}/4
+                        </div>
                       </div>
-                      <h3 className="font-bold mb-3">{room.hostName || '未知玩家'} 的房间</h3>
                       <button 
                         disabled={room.status === 'playing' || (room.players?.length || 0) >= 4}
-                        onClick={() => joinRoom(room.id)}
-                        className="w-full bg-slate-800 hover:bg-orange-500 py-2 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                        onClick={() => handleJoinRoom(room.id)}
+                        className="w-full bg-slate-800 group-hover:bg-orange-600 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
                       >
-                        加入游戏 <ChevronRight size={16} />
+                        {room.status === 'playing' ? '对局中' : '加入对局'} <ChevronRight size={16} />
                       </button>
                     </div>
                   ))
                 )}
               </div>
             </div>
-
-            <div className="bg-indigo-900/20 rounded-3xl p-6 border border-indigo-500/10 h-fit">
-              <h3 className="text-lg font-bold flex items-center gap-2 mb-4">
-                <Trophy className="text-amber-400" size={20} /> 计分规则
-              </h3>
-              <ul className="text-sm text-slate-400 space-y-3">
-                <li>• 首出需满 30 分</li>
-                <li>• 组合：同数异色 或 同色连续</li>
-                <li>• 每次出牌后桌上必须都是合法组合</li>
-              </ul>
-            </div>
           </div>
         ) : (
-          <div className="flex flex-col h-[calc(100vh-160px)]">
-            <div className="flex justify-between items-center mb-6 bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
-              <button onClick={leaveRoom} className="text-slate-400 hover:text-white flex items-center gap-2 text-sm">
-                <LogOut size={16} /> 退出
+          <div className="flex flex-col gap-6">
+            {/* 游戏内 UI */}
+            <div className="flex justify-between items-center bg-slate-900 p-4 rounded-2xl border border-white/5">
+              <button 
+                onClick={() => {
+                  if (confirm("确定要离开房间吗？")) {
+                    setCurrentRoomId(null);
+                  }
+                }}
+                className="text-slate-400 hover:text-white flex items-center gap-2 text-sm"
+              >
+                <LogOut size={16} /> 离开房间
               </button>
-              
-              {gameState.status === 'waiting' ? (
-                gameState.hostId === user?.uid && (
-                  <button onClick={startGame} className="bg-green-600 px-6 py-2 rounded-full font-bold">开始</button>
-                )
-              ) : (
-                <div className="flex items-center gap-6">
-                  <div className="text-center">
-                    <p className="text-[10px] text-slate-500 uppercase">牌堆</p>
-                    <p className="text-lg font-bold text-orange-500">{gameState.deck?.length || 0}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-[10px] text-slate-500 uppercase">当前回合</p>
-                    <p className="text-sm font-bold">{currentPlayer?.name || '...'}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {gameState.status === 'waiting' ? (
-              <div className="flex-1 flex flex-col items-center justify-center">
-                <Users className="text-slate-700 mb-4 animate-pulse" size={48} />
-                <h2 className="text-xl font-bold mb-4">等待玩家... ({players.length}/4)</h2>
-                <div className="flex gap-2">
-                  {players.map(p => (
-                    <div key={p.uid} className="bg-slate-800 px-4 py-2 rounded-lg text-sm">{p.name}</div>
-                  ))}
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-slate-500 font-mono italic">#{currentRoomId}</span>
+                <div className="px-3 py-1 bg-orange-500/10 text-orange-500 rounded-full text-xs font-bold uppercase tracking-tighter">
+                  {gameState?.status || '等待中'}
                 </div>
               </div>
-            ) : (
-              <div className="flex-1 flex flex-col gap-4 overflow-hidden">
-                <div className="flex justify-center gap-4 py-2">
-                  {players.filter(p => p.uid !== user?.uid).map(p => (
-                    <div key={p.uid} className={`px-4 py-2 rounded-xl border text-sm ${currentPlayer?.uid === p.uid ? 'border-orange-500 bg-orange-500/10' : 'border-slate-800 bg-slate-900/50'}`}>
-                      {p.name}: {p.hand?.length || 0} 张
+            </div>
+
+            {gameState?.status === 'waiting' ? (
+              <div className="flex-1 min-h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-3xl border border-dashed border-white/10">
+                <h2 className="text-2xl font-black mb-6">等待对局开始...</h2>
+                <div className="flex flex-wrap justify-center gap-4 mb-8">
+                  {(gameState.players || []).map(p => (
+                    <div key={p.uid} className="flex flex-col items-center gap-2">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${p.uid === user.uid ? 'bg-orange-500 shadow-lg shadow-orange-500/30' : 'bg-slate-800'}`}>
+                        <Users size={24} />
+                      </div>
+                      <span className="text-xs font-bold">{p.name}</span>
                     </div>
                   ))}
                 </div>
-
-                <div className="flex-1 bg-slate-900/40 rounded-3xl border border-slate-800 p-6 overflow-y-auto">
-                  <div className="flex flex-wrap gap-4">
-                    {(gameState.board || []).map((set, i) => (
-                      <div key={`set-${i}`} className="flex bg-slate-800/50 p-2 rounded-lg gap-1 border border-slate-700">
-                        {set.map(tile => <Tile key={tile.id} tile={tile} size="sm" />)}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-slate-900/80 rounded-3xl border border-slate-700 p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm font-bold">你的手牌 ({myData?.hand?.length || 0})</span>
-                    <div className="flex gap-2">
-                      <button 
-                        disabled={currentPlayer?.uid !== user?.uid} 
-                        onClick={drawTile}
-                        className="bg-slate-700 hover:bg-slate-600 disabled:opacity-20 px-4 py-1 rounded-full text-sm font-bold"
-                      >
-                        摸牌
-                      </button>
-                      <button 
-                        disabled={currentPlayer?.uid !== user?.uid}
-                        className="bg-orange-500 disabled:opacity-20 px-4 py-1 rounded-full text-sm font-bold"
-                      >
-                        结束回合
-                      </button>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 overflow-x-auto pb-2 min-h-[60px]">
-                    {(myData?.hand || []).map(tile => (
-                      <Tile key={tile.id} tile={tile} />
-                    ))}
-                  </div>
-                </div>
+                {gameState.hostId === user.uid && (
+                  <button className="bg-green-600 hover:bg-green-500 px-10 py-4 rounded-2xl font-black text-lg shadow-xl hover:scale-105 transition-all">
+                    开始游戏
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                 {/* 这里以后可以扩展对局内复杂的 Rummikub 棋盘逻辑 */}
+                 <div className="p-12 text-center bg-slate-900 rounded-3xl border border-white/5">
+                    <LayoutGrid className="mx-auto mb-4 text-slate-700" size={48} />
+                    <p className="text-slate-500 italic">游戏正在进行中，棋盘功能开发中...</p>
+                 </div>
               </div>
             )}
           </div>
         )}
       </main>
+
+      {/* 全局错误浮层 */}
+      {error && user && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce">
+          <AlertCircle size={20} />
+          <span className="font-bold">{error}</span>
+          <button onClick={() => setError(null)} className="ml-2 hover:opacity-50">✕</button>
+        </div>
+      )}
     </div>
   );
 }
