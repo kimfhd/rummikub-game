@@ -52,7 +52,7 @@ io.on('connection', (socket: AuthenticatedSocket) => {
   registerRoomHandlers(io, socket);
   registerGameHandlers(io, socket);
   // 断开连接处理
-  socket.on('disconnect', (reason) => {
+  socket.on('disconnect', (reason: string) => {
     logger.info(`Client disconnected: ${socket.id}, reason: ${reason}`);
     
     // 延迟处理断线重连

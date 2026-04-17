@@ -66,11 +66,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useRoomStore } from '../stores/room';
 import { useSocketStore } from '../stores/socket';
-import { ClientEvents, ServerEvents, Room, Player } from '../shared/types';
+import { ClientEvents, ServerEvents, Room, Player, GameState } from '../shared/types';
 
 const route = useRoute();
 const router = useRouter();
@@ -115,7 +115,10 @@ const setupListeners = () => {
     refreshRoom();
   });
 
-  socketStore.on(ServerEvents.GAME_STARTED, () => {
+  socketStore.on(ServerEvents.GAME_STARTED, ({ gameState: gs }: { gameState: GameState }) => {
+    if (roomStore.currentRoom) {
+      roomStore.currentRoom.gameState = gs;
+    }
     router.push('/game');
   });
 };
@@ -138,6 +141,18 @@ const rejoinRoom = async () => {
     return;
   }
 
+  // 等待 socket 连接就绪
+  if (!socketStore.isConnected) {
+    await new Promise<void>((resolve) => {
+      const unwatch = watch(() => socketStore.isConnected, (connected) => {
+        if (connected) {
+          unwatch();
+          resolve();
+        }
+      });
+    });
+  }
+
   try {
     const result = await socketStore.emit<{ room: Room; playerId: string }>(
       ClientEvents.JOIN_ROOM, 
@@ -145,7 +160,7 @@ const rejoinRoom = async () => {
     );
     
     roomStore.currentRoom = result.room;
-    roomStore.myPlayerId.value = result.playerId;
+    roomStore.myPlayerId = result.playerId;
     showMessage('已连接到房间');
   } catch (err: any) {
     showMessage(err.message || '房间已不存在');

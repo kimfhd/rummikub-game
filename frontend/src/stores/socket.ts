@@ -56,13 +56,19 @@ export const useSocketStore = defineStore('socket', () => {
         return;
       }
 
-      socket.value.emit(event, data, (response: any) => {
+      const callback = (response: any) => {
         if (response?.success) {
           resolve(response.data);
         } else {
           reject(response?.error || new Error('Request failed'));
         }
-      });
+      };
+
+      if (data !== undefined) {
+        socket.value.emit(event, data, callback);
+      } else {
+        socket.value.emit(event, callback);
+      }
     });
   };
 
@@ -71,7 +77,12 @@ export const useSocketStore = defineStore('socket', () => {
   };
 
   const off = (event: ServerEvents, callback?: Function) => {
-    socket.value?.off(event, callback as any);
+    if (!socket.value) return;
+    if (callback) {
+      socket.value.off(event, callback as any);
+    } else {
+      socket.value.off(event);
+    }
   };
 
   return {

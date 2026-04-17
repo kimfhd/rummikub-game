@@ -78,6 +78,27 @@ export const useRoomStore = defineStore('room', () => {
     }
   };
 
+  // 从 localStorage 恢复并重新加入房间（用于刷新页面后恢复）
+  const tryRejoinRoom = async (): Promise<Room | null> => {
+    const saved = restoreRoom();
+    if (!saved) return null;
+
+    try {
+      const result = await socketStore.emit<{ room: Room; playerId: string; isRejoin: boolean }>(
+        ClientEvents.JOIN_ROOM,
+        { roomId: saved.roomId, playerName: saved.playerName }
+      );
+      currentRoom.value = result.room;
+      myPlayerId.value = result.playerId;
+      persistRoom();
+      return result.room;
+    } catch (err) {
+      console.error('Rejoin room failed:', err);
+      clearPersist();
+      return null;
+    }
+  };
+
   return {
     currentRoom,
     myPlayerId,
@@ -87,6 +108,7 @@ export const useRoomStore = defineStore('room', () => {
     joinRoom,
     leaveRoom,
     restoreRoom,
-    clearPersist
+    clearPersist,
+    tryRejoinRoom
   };
 });

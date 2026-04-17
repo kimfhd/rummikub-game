@@ -84,6 +84,19 @@ export class GameValidator {
     return score;
   }
 
+  // 计算本回合新出牌的总分
+  static calculateNewTileScore(board: Meld[]): number {
+    let score = 0;
+    for (const meld of board) {
+      for (const tile of meld.tiles) {
+        if (tile.isNew) {
+          score += tile.type === 'joker' ? 10 : tile.value;
+        }
+      }
+    }
+    return score;
+  }
+
   // 检查玩家操作后的局面是否有效
   static validateTurn(
     initialBoard: Meld[],

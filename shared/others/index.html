@@ -1,0 +1,1105 @@
+[#Rummikub多人联机版-优化版]
+
+    
+    
+    Rummikub - 多人联机版
+    
+    
+        :root {
+            --bg-dark: #0f172a;
+            --panel-dark: #1e293b;
+            --accent-blue: #38bdf8;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            overscroll-behavior-y: contain; 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* UI Screens */
+        .screen { display: none; flex-direction: column; height: 100vh; width: 100vw; }
+        .screen.active { display: flex; }
+
+        /* 牌的基本样式 */
+        .rummi-tile {
+            width: 42px;
+            height: 58px;
+            flex-shrink: 0;
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 4px 0 #cbd5e1, 0 6px 10px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 900;
+            font-size: 22px;
+            cursor: grab;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+            position: relative;
+            border: 1px solid rgba(0,0,0,0.05);
+            touch-action: none;
+        }
+
+        .rummi-tile:active { cursor: grabbing; }
+
+        .rummi-tile.dragging-original { opacity: 0.3; transform: scale(0.8); }
+        .rummi-tile.multi-selected { box-shadow: 0 0 15px var(--accent-blue), 0 4px 0 #0284c7; transform: translateY(-10px); z-index: 40; }
+        .rummi-tile.new-tile { box-shadow: 0 0 0 2px var(--accent-blue), 0 4px 0 #0284c7; animation: highlight-pulse 2s infinite; }
+
+        @keyframes highlight-pulse {
+            0% { box-shadow: 0 0 0 2px var(--accent-blue), 0 4px 0 #0284c7; }
+            50% { box-shadow: 0 0 12px 4px var(--accent-blue), 0 4px 0 #0284c7; }
+            100% { box-shadow: 0 0 0 2px var(--accent-blue), 0 4px 0 #0284c7; }
+        }
+
+        .tile-draw-anim { animation: tile-pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes tile-pop-in {
+            0% { transform: scale(0) translateY(20px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .rummi-tile.locked-tile {
+            background: #f1f5f9;
+            box-shadow: 0 2px 0 #94a3b8, 0 4px 8px rgba(0,0,0,0.2);
+            filter: saturate(0.6);
+            cursor: default;
+        }
+
+        .rummi-tile.on-board { width: 38px; height: 52px; font-size: 18px; }
+
+        /* 颜色定义 */
+        .color-black { color: #1e293b; }
+        .color-red { color: #ef4444; }
+        .color-blue { color: #3b82f6; }
+        .color-orange { color: #f97316; }
+
+        .game-board {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .meld-group {
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.06);
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            gap: 6px;
+            min-height: 80px;
+            flex-wrap: wrap;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .meld-group.invalid { border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); }
+
+        .rack-container {
+            background: var(--panel-dark);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 12px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+            transition: opacity 0.3s;
+        }
+        
+        .rack-container.not-my-turn {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .rack-row {
+            display: flex;
+            gap: 6px;
+            min-height: 74px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 8px;
+            overflow-x: auto;
+            align-items: center;
+            scrollbar-width: none; 
+            white-space: nowrap;
+        }
+        .rack-row::-webkit-scrollbar { display: none; }
+
+        @keyframes pop {
+            0% { transform: translate(-50%, 20px); opacity: 0; }
+            15% { transform: translate(-50%, 0); opacity: 1; }
+            85% { transform: translate(-50%, 0); opacity: 1; }
+            100% { transform: translate(-50%, -20px); opacity: 0; }
+        }
+        .animate-pop { animation: pop 2.5s forwards; }
+
+        #drag-ghost-container { position: fixed; top: -1000px; left: -1000px; display: flex; pointer-events: none; z-index: 999; }
+        .ghost-tile {
+            width: 42px; height: 58px; background: #fff; border-radius: 6px;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 900; font-size: 22px; border: 1px solid rgba(0,0,0,0.1);
+            position: absolute; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        /* 玩家列表横幅 */
+        .player-avatars { display: flex; gap: 12px; overflow-x: auto; padding: 10px; background: rgba(0,0,0,0.3); }
+        .player-avatar { 
+            display: flex; flex-direction: column; align-items: center; 
+            background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; border: 1px solid transparent;
+            min-width: 80px;
+        }
+        .player-avatar.active-turn { border-color: var(--accent-blue); background: rgba(56, 189, 248, 0.1); }
+        
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+        }
+        
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    
+
+    
+    
+
+    
+    
+        
+            RUMMIKUB
+            正在连接服务器...
+            
+                
+                    你的昵称
+                    
+                
+                
+                    创建房间
+                    加入房间
+                
+            
+            
+                
+                确认加入
+                返回
+            
+        
+    
+
+    
+    
+        
+            等待玩家加入
+            
+                房间码
+                ------
+            
+            
+            
+                当前玩家 (0/4)
+                
+                    
+                
+            
+            
+            开始游戏
+            等待房主开始...
+            离开房间
+        
+    
+
+    
+    
+        
+            
+                
+                    RUMMIKUB
+                    
+                        
+                            牌堆
+                            --
+                        
+                    
+                
+                
+                    重置本地盘面
+                
+            
+            
+            
+                
+            
+        
+
+        
+            
+        
+
+        
+            
+                等待对手操作...
+            
+            
+            
+                
+                    
+                        按颜色排序
+                        按数字排序
+                    
+                    
+                        
+                            我的手牌
+                            0
+                        
+                        未破冰
+                    
+                
+
+                
+                
+
+                
+                    摸牌
+                    
+                        结束回合
+                        出分: 0
+                    
+                
+            
+        
+    
+
+    
+    
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Constants & Utilities
+        const COLORS = ['color-black', 'color-red', 'color-blue', 'color-orange'];
+        const COLOR_ORDER = { 'color-black': 1, 'color-red': 2, 'color-blue': 3, 'color-orange': 4 };
+        const MAX_PER_ROW = 16;
+        
+        class Tile {
+            constructor(val, color, type = 'number') {
+                this.id = Math.random().toString(36).substr(2, 9);
+                this.value = val;
+                this.color = color;
+                this.type = type;
+                this.isNew = false; 
+                this.isJustDrawn = false; 
+            }
+        }
+
+        // Global State
+        window.user = null;
+        window.db = null;
+        window.currentRoomId = null;
+        window.roomData = null; // Syncs from Firestore
+        window.unsubscribeRoom = null;
+        window.appId = typeof __app_id !== 'undefined' ? __app_id : 'default-rummikub-app';
+
+        // Local State (for current turn actions)
+        window.localState = {
+            handRows: [[], []], 
+            boardMelds: [],
+            isBrokenIce: false,
+            sortMode: 'runs',
+            draggedItem: null,
+            pressTimer: null,
+            multiSelection: null,
+            initialBoardState: null, // to reset turn
+            initialHandState: null
+        };
+
+        // Initialize App
+        const initAuth = async () => {
+            const firebaseConfig = {
+                apiKey: "AIzaSyDZO5rUi0ig2Z50FycbZQ96EUEOoyyeziw",
+                authDomain: "rummikub-multiplayer.firebaseapp.com",
+                projectId: "rummikub-multiplayer",
+                storageBucket: "rummikub-multiplayer.firebasestorage.app",
+                messagingSenderId: "219008004003",
+                appId: "1:219008004003:web:fb425ecd6ec7441b2ff416",
+                measurementId: "G-FTPB5BDTC9"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            window.db = getFirestore(app);
+
+            onAuthStateChanged(auth, (u) => {
+                if (u) {
+                    window.user = u;
+                    document.getElementById('authStatus').innerText = "连接成功！";
+                    document.getElementById('setupForm').classList.remove('hidden');
+                    document.getElementById('setupForm').classList.add('flex');
+                    const savedName = localStorage.getItem('rummikub_name');
+                    if(savedName) document.getElementById('playerNameInput').value = savedName;
+                } else {
+                    // 如果认证失效，回到登录界面
+                    document.getElementById('authStatus').innerText = "认证失败，请刷新重试。";
+                    document.getElementById('setupForm').classList.add('hidden');
+                }
+            });
+
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Auth error", error);
+                document.getElementById('authStatus').innerText = "连接失败，请刷新重试。";
+            }
+        };
+
+        // Run Auth Init
+        initAuth();
+
+        // -------------------------------------------------------------
+        // UI Navigation & Lobby Logic
+        // -------------------------------------------------------------
+        
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        window.uiShowJoinModal = () => {
+            document.getElementById('setupForm').classList.add('hidden');
+            document.getElementById('joinForm').classList.remove('hidden');
+            document.getElementById('joinForm').classList.add('flex');
+        };
+
+        window.uiHideJoinModal = () => {
+            document.getElementById('joinForm').classList.add('hidden');
+            document.getElementById('setupForm').classList.remove('hidden');
+            document.getElementById('setupForm').classList.add('flex');
+        };
+
+        function checkAuthAndRedirect() {
+            if (!window.user || !window.user.uid) {
+                showToast("请先登录", "error");
+                switchScreen('screen-setup');
+                return false;
+            }
+            return true;
+        }
+
+        function getPlayerName() {
+            let name = document.getElementById('playerNameInput').value.trim();
+            if (!name) name = "玩家_" + Math.floor(Math.random() * 1000);
+            localStorage.setItem('rummikub_name', name);
+            return name;
+        }
+
+        function validateRoomCode(code) {
+            const validChars = /^[A-Z0-9]*/;
+            return code.length === 5 && validChars.test(code);
+        }
+
+        function generateRoomCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let result = '';
+            for (let i = 0; i  {
+            if (!checkAuthAndRedirect()) return;
+            
+            // 显示加载状态
+            const btn = document.getElementById('createRoomBtn');
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+            
+            try {
+                const name = getPlayerName();
+                const roomId = generateRoomCode();
+                const roomRef = getRoomDocRef(roomId);
+
+                const initialData = {
+                    roomId: roomId,
+                    status: 'waiting',
+                    hostId: window.user.uid,
+                    players: [{ uid: window.user.uid, name: name, hasBrokenIce: false, handRows: [[], []] }],
+                    boardMelds: [],
+                    deck: [],
+                    turnIndex: 0,
+                    winnerId: null,
+                    lastUpdated: Date.now()
+                };
+
+                await setDoc(roomRef, initialData);
+                window.currentRoomId = roomId;
+                listenToRoom(roomId);
+                switchScreen('screen-waiting');
+            } catch (error) {
+                console.error("Create room error:", error);
+                showToast("创建房间失败", "error");
+            } finally {
+                // 恢复按钮状态
+                btn.classList.remove('btn-loading');
+                btn.disabled = false;
+            }
+        };
+
+        window.uiJoinRoom = async () => {
+            if (!checkAuthAndRedirect()) return;
+            
+            const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            if (!validateRoomCode(code)) {
+                return showToast("房间码应为5位字母数字组合", "error");
+            }
+            
+            // 显示加载状态
+            const btn = document.getElementById('joinRoomBtn');
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+            
+            try {
+                const roomRef = getRoomDocRef(code);
+                const docSnap = await getDoc(roomRef);
+                
+                if (!docSnap.exists()) {
+                    return showToast("房间不存在", "error");
+                }
+
+                const data = docSnap.data();
+                if (data.status !== 'waiting') return showToast("房间已开始游戏或已关闭", "error");
+                if (data.players.length >= 4) return showToast("房间已满", "error");
+                
+                // 使用事务确保原子性操作
+                await runTransaction(window.db, async (transaction) => {
+                    const roomDoc = await transaction.get(roomRef);
+                    if (!roomDoc.exists()) throw "房间不存在";
+                    
+                    const roomData = roomDoc.data();
+                    if (roomData.status !== 'waiting') throw "房间状态已改变";
+                    if (roomData.players.length >= 4) throw "房间已满";
+                    
+                    const existingPlayer = roomData.players.find(p => p.uid === window.user.uid);
+                    const name = getPlayerName();
+                    
+                    if (!existingPlayer) {
+                        const updatedPlayers = [...roomData.players];
+                        updatedPlayers.push({ uid: window.user.uid, name: name, hasBrokenIce: false, handRows: [[], []] });
+                        
+                        transaction.update(roomRef, { 
+                            players: updatedPlayers, 
+                            lastUpdated: Date.now() 
+                        });
+                    }
+                });
+
+                window.currentRoomId = code;
+                listenToRoom(code);
+                switchScreen('screen-waiting');
+            } catch (error) {
+                console.error("Join room error:", error);
+                if (error.message === "房间不存在") {
+                    showToast("房间不存在", "error");
+                } else if (error.message === "房间状态已改变") {
+                    showToast("房间状态已改变", "error");
+                } else if (error.message === "房间已满") {
+                    showToast("房间已满", "error");
+                } else {
+                    showToast("加入房间失败", "error");
+                }
+            } finally {
+                // 恢复按钮状态
+                btn.classList.remove('btn-loading');
+                btn.disabled = false;
+            }
+        };
+
+        function listenToRoom(roomId) {
+            if (window.unsubscribeRoom) window.unsubscribeRoom();
+            
+            window.unsubscribeRoom = onSnapshot(getRoomDocRef(roomId), (docSnap) => {
+                if (!docSnap.exists()) {
+                    showToast("房间已解散");
+                    leaveRoom();
+                    return;
+                }
+                
+                const data = docSnap.data();
+                const wasWaiting = (!window.roomData || window.roomData.status === 'waiting');
+                window.roomData = data;
+                
+                if (data.status === 'waiting') {
+                    updateWaitingRoomUI();
+                } else if (data.status === 'playing') {
+                    if (wasWaiting) {
+                        switchScreen('screen-game');
+                        initializeLocalGameFromRemote();
+                    }
+                    syncGameUI();
+                } else if (data.status === 'finished') {
+                    syncGameUI();
+                    const winner = data.players.find(p => p.uid === data.winnerId);
+                    if(winner) showWinnerModal(winner.name);
+                }
+            }, (error) => {
+                console.error("Snapshot error:", error);
+                showToast("同步断开");
+            });
+        }
+
+        function updateWaitingRoomUI() {
+            if (!window.roomData) return;
+            
+            document.getElementById('displayRoomCode').innerText = window.roomData.roomId;
+            document.getElementById('playerCount').innerText = window.roomData.players.length;
+            
+            const list = document.getElementById('waitingPlayerList');
+            list.innerHTML = '';
+            
+            window.roomData.players.forEach(p => {
+                const isMe = p.uid === window.user.uid;
+                const isHost = p.uid === window.roomData.hostId;
+                list.innerHTML += 
+                    
+                        
+                            {p.name}
+                            {isMe ? '你' : ''}
+                            {isHost ? '房主' : ''}
+                        
+                    
+                ;
+            });
+
+            const isMyHost = window.roomData.hostId === window.user.uid;
+            const startBtn = document.getElementById('startGameBtn');
+            const waitText = document.getElementById('waitingHostText');
+            
+            if (isMyHost) {
+                startBtn.classList.remove('hidden');
+                waitText.classList.add('hidden');
+                startBtn.disabled = window.roomData.players.length  0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+
+        window.gameStartLogic = async () => {
+            if (!window.user || window.roomData.hostId !== window.user.uid) return;
+            
+            // Build Deck
+            let deck = [];
+            for (let s=0; s {
+                    for (let v=1; v {
+                const hand = deck.splice(0, 14);
+                p.handRows = [hand.slice(0, 7), hand.slice(7)];
+                p.hasBrokenIce = false;
+            });
+
+            const roomRef = getRoomDocRef(window.currentRoomId);
+            await updateDoc(roomRef, {
+                status: 'playing',
+                deck: deck,
+                players: players,
+                boardMelds: [],
+                turnIndex: 0,
+                lastUpdated: Date.now()
+            });
+        };
+
+        function initializeLocalGameFromRemote() {
+            const me = window.roomData.players.find(p => p.uid === window.user.uid);
+            if (me) {
+                window.localState.handRows = JSON.parse(JSON.stringify(me.handRows));
+                window.localState.isBrokenIce = me.hasBrokenIce;
+            }
+            // Always set manual initially, but applying default runs sort
+            window.localState.sortMode = 'runs';
+            applyCurrentSort();
+            saveTurnState(true);
+        }
+
+        function saveTurnState(forceBoard = false) {
+            window.localState.initialHandState = JSON.parse(JSON.stringify(window.localState.handRows));
+            if (forceBoard) {
+                window.localState.initialBoardState = JSON.parse(JSON.stringify(window.roomData.boardMelds));
+            } else {
+                 window.localState.initialBoardState = JSON.parse(JSON.stringify(window.localState.boardMelds));
+            }
+        }
+
+        // Triggered every time Firestore updates
+        function syncGameUI() {
+            if (!window.roomData || window.roomData.status !== 'playing') return;
+
+            const isMyTurn = window.roomData.players[window.roomData.turnIndex].uid === window.user.uid;
+            
+            // Update Deck
+            document.getElementById('deckCount').innerText = window.roomData.deck.length;
+
+            // Render Player Status Bar
+            const pBar = document.getElementById('playerStatusBar');
+            pBar.innerHTML = '';
+            window.roomData.players.forEach((p, idx) => {
+                const isActive = idx === window.roomData.turnIndex;
+                const handCount = p.handRows[0].length + p.handRows[1].length;
+                const isMe = p.uid === window.user.uid;
+                pBar.innerHTML += 
+                    
+                        {isMe ? '你' : p.name}
+                        
+                            
+                            {handCount}
+                        
+                    
+                ;
+            });
+
+            const rackContainer = document.getElementById('rackContainer');
+            const turnOverlay = document.getElementById('turnOverlay');
+            const drawBtn = document.getElementById('drawBtn');
+            const resetTurnBtn = document.getElementById('resetTurnBtn');
+
+            if (isMyTurn) {
+                rackContainer.classList.remove('not-my-turn');
+                turnOverlay.classList.add('hidden');
+                drawBtn.disabled = false;
+                resetTurnBtn.style.display = 'block';
+
+                // Sync local board only if we just started our turn (local state board length matches saved initial board length)
+                // Actually safer to always ensure local state board exists.
+                if (!window.localState.boardMelds || window.localState.boardMelds.length === 0 && window.roomData.boardMelds.length > 0) {
+                     window.localState.boardMelds = JSON.parse(JSON.stringify(window.roomData.boardMelds));
+                     saveTurnState();
+                }
+
+                renderLocalGame();
+            } else {
+                rackContainer.classList.add('not-my-turn');
+                turnOverlay.classList.remove('hidden');
+                const currPlayerName = window.roomData.players[window.roomData.turnIndex].name;
+                document.getElementById('turnOverlayText').innerText = 等待 {currPlayerName} 操作...;
+                drawBtn.disabled = true;
+                resetTurnBtn.style.display = 'none';
+                
+                // Keep local board synced with remote while waiting
+                window.localState.boardMelds = JSON.parse(JSON.stringify(window.roomData.boardMelds));
+                renderLocalGame();
+            }
+        }
+
+        // -------------------------------------------------------------
+        // Local Rendering & Interaction 
+        // (Adapted from Original Code to use window.localState)
+        // -------------------------------------------------------------
+
+        function renderLocalGame() {
+            if (!window.roomData) return;
+            
+            const isMyTurn = window.roomData.players[window.roomData.turnIndex].uid === window.user.uid;
+
+            const totalHandCount = window.localState.handRows[0].length + window.localState.handRows[1].length;
+            document.getElementById('playerHandCount').innerText = totalHandCount;
+            
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                const mode = btn.id === 'sortRunsBtn' ? 'runs' : 'groups';
+                if (window.localState.sortMode === mode) {
+                    btn.classList.add('bg-blue-500', 'text-white', 'border-blue-400');
+                    btn.classList.remove('bg-white/5', 'text-slate-300');
+                } else {
+                    btn.classList.remove('bg-blue-500', 'text-white', 'border-blue-400');
+                    btn.classList.add('bg-white/5', 'text-slate-300');
+                }
+            });
+
+            const ice = document.getElementById('iceStatus');
+            ice.innerText = window.localState.isBrokenIce ? "已破冰" : "未破冰 (需30分)";
+            ice.className = text-[9px] font-black px-3 py-1.5 rounded-full border {window.localState.isBrokenIce ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/30'};
+
+            [0, 1].forEach(rIdx => {
+                const rowEl = document.getElementById(rackRow{rIdx});
+                if (!rowEl) return;
+                rowEl.innerHTML = '';
+                window.localState.handRows[rIdx].forEach((tile, tIdx) => {
+                    const el = createTileEl(tile);
+                    if(isMyTurn) el.draggable = true;
+                    el.dataset.index = tIdx;
+
+                    if (window.localState.multiSelection && window.localState.multiSelection.rowIdx === rIdx && 
+                        tIdx >= window.localState.multiSelection.startIndex && 
+                        tIdx  { window.localState.pressTimer = setTimeout(() => identifyPotentialMeld(rIdx, tIdx), 600); };
+                        el.onmousedown = handleLongPress; el.onmouseup = () => clearTimeout(window.localState.pressTimer);
+                        el.ontouchstart = handleLongPress; el.ontouchend = () => clearTimeout(window.localState.pressTimer);
+
+                        el.ondragstart = (e) => {
+                            clearTimeout(window.localState.pressTimer);
+                            let tilesToDrag = [];
+                            if (window.localState.multiSelection && window.localState.multiSelection.rowIdx === rIdx && tIdx >= window.localState.multiSelection.startIndex && tIdx  { el.classList.remove('dragging-original'); window.localState.multiSelection = null; renderLocalGame(); };
+                    }
+                    rowEl.appendChild(el);
+                    if(tile.isJustDrawn) setTimeout(() => { tile.isJustDrawn = false; }, 500);
+                });
+
+                if(isMyTurn) {
+                    rowEl.ondragover = (e) => e.preventDefault();
+                    rowEl.ondrop = (e) => { e.preventDefault(); handleDropOnRack(e, rIdx); };
+                }
+            });
+
+            const container = document.getElementById('meldContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            let currentBoardScore = 0;
+            
+            window.localState.boardMelds.forEach((meld, mIdx) => {
+                const groupEl = document.createElement('div');
+                const isValid = validateMeld(meld);
+                groupEl.className = meld-group {isValid ? '' : 'invalid'};
+                if (isMyTurn) {
+                    groupEl.ondragover = (e) => e.preventDefault();
+                    groupEl.ondrop = (e) => { e.preventDefault(); handleDropOnMeld(mIdx); };
+                }
+
+                meld.forEach((tile, tIdx) => {
+                    const tEl = createTileEl(tile, true);
+                    if (isMyTurn) {
+                        tEl.draggable = true;
+                        tEl.ondragstart = (e) => {
+                            if (!window.localState.isBrokenIce && !tile.isNew) {
+                                e.preventDefault(); showToast("破冰前禁止操作桌面旧牌", "info"); return;
+                            }
+                            window.localState.draggedItem = { source: 'board', mIdx: mIdx, tIdx: tIdx, tile: tile };
+                            const ghost = prepareDragGhost([tile]);
+                            e.dataTransfer.setDragImage(ghost, 20, 30);
+                        };
+                        
+                        tEl.onclick = () => {
+                            if (!tile.isNew && !window.localState.isBrokenIce) return showToast("未破冰不可取回旧牌", "info");
+                            const recovered = window.localState.boardMelds[mIdx].splice(tIdx, 1)[0];
+                            recovered.isJustDrawn = true; 
+                            addTileToHand(recovered);
+                            window.localState.boardMelds = window.localState.boardMelds.filter(m => m.length > 0);
+                            renderLocalGame();
+                        };
+                    }
+                    groupEl.appendChild(tEl);
+                    if (tile.isNew && isMyTurn) {
+                        currentBoardScore += (tile.type === 'joker' ? 10 : (typeof tile.value === 'number' ? tile.value : 0));
+                    }
+                });
+                container.appendChild(groupEl);
+            });
+
+            if (isMyTurn) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'meld-group border-dashed border-white/10 justify-center items-center text-[10px] text-white/20 uppercase font-bold h-[80px] cursor-pointer hover:bg-white/5';
+                placeholder.innerText = '+ 新牌组';
+                placeholder.onclick = () => { window.localState.boardMelds.push([]); renderLocalGame(); };
+                placeholder.ondrop = (e) => { e.preventDefault(); window.localState.boardMelds.push([]); handleDropOnMeld(window.localState.boardMelds.length - 1); };
+                placeholder.ondragover = (e) => e.preventDefault();
+                container.appendChild(placeholder);
+                
+                const scoreHint = document.getElementById('scoreHint');
+                scoreHint.innerText = 出分: {currentBoardScore};
+                const btn = document.getElementById('finishBtn');
+                const hasNewOnBoard = window.localState.boardMelds.some(m => m.some(t => t.isNew));
+                const canFinish = (currentBoardScore >= 30 || window.localState.isBrokenIce) && hasNewOnBoard;
+                
+                if (canFinish) {
+                    btn.className = flex-[3] rounded-xl font-black transition-all active:scale-95 flex flex-col items-center justify-center shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-500/20;
+                    btn.disabled = false;
+                } else {
+                    btn.className = flex-[3] rounded-xl font-black transition-all flex flex-col items-center justify-center bg-slate-700 opacity-50 cursor-not-allowed;
+                    btn.disabled = true;
+                }
+            }
+        }
+
+        function createTileEl(tile, onBoard = false) {
+            const div = document.createElement('div');
+            const statusClass = onBoard ? (tile.isNew ? 'new-tile' : 'locked-tile') : (tile.isNew ? 'new-tile' : '');
+            const animClass = tile.isJustDrawn ? 'tile-draw-anim' : '';
+            div.className = rummi-tile {tile.color} {onBoard ? 'on-board' : ''} {statusClass} {animClass};
+            div.innerHTML = tile.type === 'joker' ? '☻' : tile.value;
+            return div;
+        }
+
+        function prepareDragGhost(tiles) {
+            const container = document.getElementById('drag-ghost-container');
+            container.innerHTML = '';
+            tiles.forEach((tile, i) => {
+                const ghost = document.createElement('div');
+                ghost.className = ghost-tile {tile.color};
+                ghost.innerHTML = tile.type === 'joker' ? '☻' : tile.value;
+                ghost.style.left = {i * 12}px; ghost.style.top = {i * 4}px; ghost.style.zIndex = 100 - i;
+                container.appendChild(ghost);
+            });
+            return container;
+        }
+
+        function addTileToHand(tile) {
+            tile.isNew = false; 
+            window.localState.handRows[1].push(tile);
+            if (window.localState.sortMode !== 'manual') applyCurrentSort();
+        }
+
+        window.setSortMode = function(mode) {
+            if (window.localState.sortMode === mode) window.localState.sortMode = 'manual';
+            else window.localState.sortMode = mode;
+            if (window.localState.sortMode !== 'manual') applyCurrentSort();
+            renderLocalGame();
+        };
+
+        function applyCurrentSort() {
+            let all = [...window.localState.handRows[0], ...window.localState.handRows[1]];
+            if (window.localState.sortMode === 'runs') {
+                all.sort((a,b) => (a.type==='joker')-(b.type==='joker') || COLOR_ORDER[a.color]-COLOR_ORDER[b.color] || a.value-b.value);
+            } else if (window.localState.sortMode === 'groups') {
+                all.sort((a,b) => (a.type==='joker')-(b.type==='joker') || a.value-b.value || COLOR_ORDER[a.color]-COLOR_ORDER[b.color]);
+            }
+            window.localState.handRows[0] = all.slice(0, Math.min(all.length, MAX_PER_ROW));
+            window.localState.handRows[1] = all.slice(window.localState.handRows[0].length);
+        }
+
+        function handleDropOnMeld(targetMIdx) {
+            if (!window.localState.draggedItem) return;
+            const { source, rowIdx, mIdx, tIdx, tile, tiles, startIndex, count } = window.localState.draggedItem;
+
+            if (source === 'hand') {
+                window.localState.handRows[rowIdx].splice(tIdx, 1);
+                tile.isNew = true; window.localState.boardMelds[targetMIdx].push(tile);
+            } else if (source === 'hand_multi') {
+                window.localState.handRows[rowIdx].splice(startIndex, count);
+                tiles.forEach(t => t.isNew = true); window.localState.boardMelds[targetMIdx].push(...tiles);
+            } else if (source === 'board') {
+                window.localState.boardMelds[mIdx].splice(tIdx, 1);
+                window.localState.boardMelds[targetMIdx].push(tile);
+            }
+            
+            window.localState.boardMelds[targetMIdx] = sortMeld(window.localState.boardMelds[targetMIdx]);
+            window.localState.boardMelds = window.localState.boardMelds.filter(m => m.length > 0);
+            window.localState.draggedItem = null;
+            renderLocalGame();
+        }
+
+        function handleDropOnRack(e, targetRowIdx) {
+            if (!window.localState.draggedItem) return;
+            const { source, rowIdx, mIdx, tIdx, tile, tiles, startIndex, count } = window.localState.draggedItem;
+
+            let insertIdx = window.localState.handRows[targetRowIdx].length;
+            const targetEl = e.target.closest('.rummi-tile');
+            if (targetEl && targetEl.parentElement.dataset.row == targetRowIdx) {
+                const rect = targetEl.getBoundingClientRect();
+                const midX = rect.left + rect.width / 2;
+                const idx = parseInt(targetEl.dataset.index);
+                insertIdx = e.clientX  m.length > 0);
+                if (window.localState.sortMode !== 'manual') applyCurrentSort();
+            }
+
+            window.localState.draggedItem = null;
+            renderLocalGame();
+        }
+
+        function identifyPotentialMeld(rowIdx, startIndex) {
+            const row = window.localState.handRows[rowIdx];
+            let bestLen = 0;
+            for (let len = 3; len = 3) {
+                window.localState.multiSelection = { rowIdx, startIndex, count: bestLen };
+                showToast("已选中合法组", "info"); renderLocalGame();
+            }
+        }
+
+        window.resetTurn = function() {
+            window.localState.boardMelds = JSON.parse(JSON.stringify(window.localState.initialBoardState || window.roomData.boardMelds));
+            window.localState.handRows = JSON.parse(JSON.stringify(window.localState.initialHandState));
+            renderLocalGame();
+            showToast("已恢复本回合初始状态", "info");
+        };
+
+        // -------------------------------------------------------------
+        // Server Sync Actions
+        // -------------------------------------------------------------
+        
+        window.handleDraw = async function() {
+            if (!window.roomData || window.roomData.players[window.roomData.turnIndex].uid !== window.user.uid) return;
+
+            let hasNewOnBoard = window.localState.boardMelds.some(m => m.some(t => t.isNew));
+            if (hasNewOnBoard || !window.localState.boardMelds.every(m => m.length === 0 || validateMeld(m))) {
+                // If board is altered or invalid, revert everything before drawing
+                window.localState.boardMelds = JSON.parse(JSON.stringify(window.roomData.boardMelds));
+                window.localState.handRows = JSON.parse(JSON.stringify(window.localState.initialHandState));
+            }
+            
+            let remoteDeck = [...window.roomData.deck];
+            if (remoteDeck.length > 0) {
+                const t = remoteDeck.pop();
+                t.isNew = false; t.isJustDrawn = true;
+                
+                window.localState.handRows[1].push(t);
+                if (window.localState.sortMode !== 'manual') applyCurrentSort();
+                
+                await commitTurnToFirebase(remoteDeck, window.localState.boardMelds);
+            } else {
+                showToast("牌堆已空，无法摸牌", "error");
+            }
+        };
+
+        window.finishTurn = async function() {
+            if (!window.roomData || window.roomData.players[window.roomData.turnIndex].uid !== window.user.uid) return;
+            if (!window.localState.boardMelds.every(m => m.length === 0 || validateMeld(m))) return showToast("桌上有非法牌组", "error");
+            
+            let newScore = 0;
+            window.localState.boardMelds.forEach(m => m.forEach(t => { if(t.isNew) newScore += (t.type==='joker'?10:t.value); }));
+            
+            if (!window.localState.isBrokenIce) {
+                if (newScore  m.forEach(t => t.isNew = false));
+            window.localState.handRows.forEach(r => r.forEach(t => t.isNew = false));
+
+            await commitTurnToFirebase(window.roomData.deck, window.localState.boardMelds);
+        };
+
+        async function commitTurnToFirebase(newDeck, newBoardMelds) {
+            if (!window.currentRoomId) return;
+            
+            const roomRef = getRoomDocRef(window.currentRoomId);
+            let players = [...window.roomData.players];
+            
+            const myIndex = window.roomData.turnIndex;
+            players[myIndex].handRows = window.localState.handRows;
+            players[myIndex].hasBrokenIce = window.localState.isBrokenIce;
+
+            const myHandCount = window.localState.handRows[0].length + window.localState.handRows[1].length;
+            let status = window.roomData.status;
+            let winnerId = window.roomData.winnerId;
+
+            if (myHandCount === 0) {
+                status = 'finished';
+                winnerId = window.user.uid;
+            }
+
+            let nextTurnIndex = (myIndex + 1) % players.length;
+
+            await updateDoc(roomRef, {
+                deck: newDeck,
+                boardMelds: newBoardMelds,
+                players: players,
+                turnIndex: nextTurnIndex,
+                status: status,
+                winnerId: winnerId,
+                lastUpdated: Date.now()
+            });
+
+            saveTurnState(true); // Update local initials
+        }
+
+        // -------------------------------------------------------------
+        // Room Management
+        // -------------------------------------------------------------
+        
+        window.leaveRoom = async () => {
+            if (!window.currentRoomId) return;
+            
+            try {
+                const roomRef = getRoomDocRef(window.currentRoomId);
+                const roomSnap = await getDoc(roomRef);
+                
+                if (roomSnap.exists()) {
+                    const data = roomSnap.data();
+                    let updatedPlayers = data.players.filter(p => p.uid !== window.user.uid);
+                    
+                    // 如果房主离开，需要重新分配房主或解散房间
+                    let updatedData = { players: updatedPlayers };
+                    if (data.hostId === window.user.uid) {
+                        if (updatedPlayers.length > 0) {
+                            updatedData.hostId = updatedPlayers[0].uid;
+                        } else {
+                            // 房间为空，可以删除
+                            await deleteDoc(roomRef);
+                            window.currentRoomId = null;
+                            switchScreen('screen-setup');
+                            return;
+                        }
+                    }
+                    
+                    await updateDoc(roomRef, { ...updatedData, lastUpdated: Date.now() });
+                }
+            } catch (error) {
+                console.error("Leave room error:", error);
+            }
+            
+            window.currentRoomId = null;
+            if (window.unsubscribeRoom) window.unsubscribeRoom();
+            window.unsubscribeRoom = null;
+            window.roomData = null;
+            switchScreen('screen-setup');
+        };
+        
+        // 添加删除文档的导入
+        import { deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // -------------------------------------------------------------
+        // Helpers
+        // -------------------------------------------------------------
+
+        function validateMeld(meld) {
+            if (meld.length  t.type === 'number');
+            const jokers = meld.filter(t => t.type === 'joker');
+            
+            if (meld.length  n.color));
+                if (nums.every(n => n.value === val) && colors.size === nums.length) return true;
+            }
+            
+            const colors = new Set(nums.map(n => n.color));
+            if (colors.size === 1) {
+                const sorted = [...nums].sort((a,b) => a.value - b.value);
+                if (new Set(sorted.map(s=>s.value)).size !== sorted.length) return false;
+                let gaps = 0;
+                for(let i=0; i t.type === 'number');
+            const jokers = meld.filter(t => t.type === 'joker');
+            if (nums.length === 0) return jokers;
+            if (nums.every(n => n.value === nums[0].value)) nums.sort((a,b) => COLOR_ORDER[a.color] - COLOR_ORDER[b.color]);
+            else nums.sort((a, b) => a.value - b.value);
+            return [...nums, ...jokers];
+        }
+
+        function showToast(msg, type="error") {
+            const announcer = document.getElementById('announcer');
+            const toast = document.createElement('div');
+            const colors = { error: 'bg-red-500', success: 'bg-green-500', info: 'bg-blue-600' };
+            toast.className = fixed top-20 left-1/2 -translate-x-1/2 px-6 py-3 rounded-2xl shadow-2xl z-[100] text-white text-xs font-black animate-pop border border-white/20 {colors[type]};
+            toast.innerText = msg;
+            announcer.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        function showWinnerModal(winnerName) {
+            const modal = document.createElement('div');
+            modal.className = "fixed inset-0 bg-black/80 z-[999] flex flex-col items-center justify-center backdrop-blur-sm";
+            modal.innerHTML = 
+                
+                    🏆
+                    游戏结束
+                    {winnerName} 赢得了这局比赛！
+                    返回大厅
+                
+            ;
+            document.body.appendChild(modal);
+        }

@@ -7,6 +7,7 @@ export interface Tile {
   color: Color;
   type: TileType;
   isNew?: boolean;
+  isJustDrawn?: boolean;
 }
 
 export interface Player {

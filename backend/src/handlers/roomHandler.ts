@@ -43,6 +43,7 @@ export function registerRoomHandlers(io: any, socket: AuthenticatedSocket): void
       
       socket.data.playerId = playerId;
       socket.data.playerName = data.playerName;
+      socket.data.currentRoom = room.id;
       
       await socket.join(room.id);
       
@@ -167,19 +168,6 @@ export function registerRoomHandlers(io: any, socket: AuthenticatedSocket): void
         error: { code: error.code, message: error.message }
       });
     }
-  });
-
-  // 开始游戏
-  socket.on(ClientEvents.START_GAME, async (callback?: (res: any) => void) => {
-    const roomId = socket.data.currentRoom;
-    const playerId = socket.data.playerId;
-    
-    if (!roomId || !playerId) {
-      callback?.({ success: false, error: { message: 'Not in room' } });
-      return;
-    }
-
-    callback?.({ success: false, error: { message: 'Game start not implemented yet' } });
   });
 
   // Ping
