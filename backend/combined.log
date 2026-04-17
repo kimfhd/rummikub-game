@@ -1,0 +1,326 @@
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T08:50:06.611Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T08:50:06.700Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T08:50:06.702Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T08:50:06.702Z"}
+{"level":"info","message":"SIGTERM received, shutting down gracefully","timestamp":"2026-04-17T08:58:18.856Z"}
+{"level":"info","message":"Server closed","timestamp":"2026-04-17T08:58:18.859Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T08:58:19.452Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T08:58:19.462Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T08:58:19.464Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T08:58:19.464Z"}
+{"level":"info","message":"SIGTERM received, shutting down gracefully","timestamp":"2026-04-17T09:08:01.130Z"}
+{"level":"info","message":"Server closed","timestamp":"2026-04-17T09:08:01.132Z"}
+{"level":"info","message":"SIGTERM received, shutting down gracefully","timestamp":"2026-04-17T09:08:01.726Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:08:01.730Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:08:01.740Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:08:02.356Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:08:02.367Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:08:02.368Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:08:02.368Z"}
+{"level":"info","message":"SIGTERM received, shutting down gracefully","timestamp":"2026-04-17T09:10:50.992Z"}
+{"level":"info","message":"Server closed","timestamp":"2026-04-17T09:10:50.994Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:10:58.483Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:10:58.493Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:10:58.495Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:10:58.495Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:11:21.142Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:11:21.152Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:11:21.154Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:11:21.154Z"}
+{"level":"info","message":"Client connected: q97czfmtYQhrvwF7AAAB","timestamp":"2026-04-17T09:11:29.389Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:14:21.728Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:14:21.738Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:14:21.740Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:14:21.740Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:15:13.379Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:15:13.386Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:15:13.388Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:15:13.388Z"}
+{"level":"info","message":"Client connected: YvS-W9lfFYYZEPI3AAAB","timestamp":"2026-04-17T09:15:17.094Z"}
+{"level":"info","message":"Room created: XHKCF3 by kim","timestamp":"2026-04-17T09:15:18.413Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:16:39.713Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:16:39.721Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:16:39.722Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:16:39.723Z"}
+{"level":"info","message":"Client connected: ac9fchlSVreKmECxAAAB","timestamp":"2026-04-17T09:16:39.764Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:17:35.327Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:17:35.337Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:17:35.338Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:17:35.338Z"}
+{"level":"info","message":"Client connected: owI_AbIZ8R12r445AAAB","timestamp":"2026-04-17T09:17:35.722Z"}
+{"level":"info","message":"Client disconnected: owI_AbIZ8R12r445AAAB, reason: transport close","timestamp":"2026-04-17T09:17:40.398Z"}
+{"level":"info","message":"Client connected: VVX2hDTZpg4DdOWIAAAD","timestamp":"2026-04-17T09:17:40.644Z"}
+{"level":"info","message":"Client disconnected: VVX2hDTZpg4DdOWIAAAD, reason: transport close","timestamp":"2026-04-17T09:17:42.904Z"}
+{"level":"info","message":"Client connected: f2i2JP-yT8sFmYKMAAAF","timestamp":"2026-04-17T09:17:43.046Z"}
+{"level":"info","message":"Room created: 4N48M4 by kim","timestamp":"2026-04-17T09:17:44.160Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:19:21.680Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:19:21.688Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:19:21.690Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:19:21.690Z"}
+{"level":"info","message":"Client connected: t6tCB68Nl2hPIs68AAAB","timestamp":"2026-04-17T09:19:22.104Z"}
+{"level":"info","message":"Client disconnected: t6tCB68Nl2hPIs68AAAB, reason: transport close","timestamp":"2026-04-17T09:19:24.836Z"}
+{"level":"info","message":"Client connected: 53ty1zFaoZJ5CYjjAAAD","timestamp":"2026-04-17T09:19:30.400Z"}
+{"level":"info","message":"Room created: UJWPJA by kim","timestamp":"2026-04-17T09:19:31.550Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:24:34.031Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:24:34.041Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:24:34.042Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:24:34.042Z"}
+{"level":"info","message":"Client connected: jt0z27fqqTkwdlHnAAAB","timestamp":"2026-04-17T09:24:39.709Z"}
+{"level":"info","message":"Room created: XAHY9X by kim","timestamp":"2026-04-17T09:24:40.794Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:30:33.237Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:30:33.245Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:30:33.247Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:30:33.247Z"}
+{"level":"info","message":"Client connected: UhTkfmUSA2k3QQXEAAAB","timestamp":"2026-04-17T09:30:35.169Z"}
+{"level":"info","message":"Room created: 3DG3XL by kim","timestamp":"2026-04-17T09:30:36.269Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:39:52.225Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:39:52.234Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:39:52.236Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:39:52.236Z"}
+{"level":"info","message":"Client connected: k-nZHbBGUhvB7xYsAAAB","timestamp":"2026-04-17T09:39:52.288Z"}
+{"level":"info","message":"Client disconnected: k-nZHbBGUhvB7xYsAAAB, reason: transport close","timestamp":"2026-04-17T09:39:57.702Z"}
+{"level":"info","message":"Client connected: _ULdYSIVV0Uu85Z-AAAD","timestamp":"2026-04-17T09:39:57.851Z"}
+{"level":"info","message":"Room created: X8ZTSW by kim","timestamp":"2026-04-17T09:40:04.888Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:45:30.948Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:45:30.959Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:45:30.961Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:45:30.961Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:45:33.458Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:45:33.466Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:45:33.467Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:45:33.468Z"}
+{"level":"info","message":"Client connected: tkoLuVs01btw0csgAAAB","timestamp":"2026-04-17T09:46:13.035Z"}
+{"level":"info","message":"Client disconnected: tkoLuVs01btw0csgAAAB, reason: transport close","timestamp":"2026-04-17T09:46:21.679Z"}
+{"level":"info","message":"Client connected: SDvrDGZychHXDZevAAAD","timestamp":"2026-04-17T09:47:59.639Z"}
+{"level":"info","message":"Client connected: g9a6h-mDsGtqaIcaAAAF","timestamp":"2026-04-17T09:48:07.261Z"}
+{"level":"info","message":"Client disconnected: SDvrDGZychHXDZevAAAD, reason: transport close","timestamp":"2026-04-17T09:48:12.625Z"}
+{"level":"info","message":"Client disconnected: g9a6h-mDsGtqaIcaAAAF, reason: transport close","timestamp":"2026-04-17T09:48:12.625Z"}
+{"level":"info","message":"Client connected: 9BUkEwrNCJ0bNyxoAAAH","timestamp":"2026-04-17T09:48:12.767Z"}
+{"level":"info","message":"Player kim joined room X8ZTSW","timestamp":"2026-04-17T09:48:12.794Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:48:31.811Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:48:31.821Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:48:31.823Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:48:31.823Z"}
+{"level":"info","message":"Client connected: FbHbvOy_dosKTU3EAAAB","timestamp":"2026-04-17T09:48:32.994Z"}
+{"level":"info","message":"Client disconnected: FbHbvOy_dosKTU3EAAAB, reason: transport close","timestamp":"2026-04-17T09:48:35.307Z"}
+{"level":"info","message":"Client connected: DabGEJ81C9oeEGHbAAAD","timestamp":"2026-04-17T09:48:35.525Z"}
+{"level":"info","message":"Client disconnected: DabGEJ81C9oeEGHbAAAD, reason: transport close","timestamp":"2026-04-17T09:48:38.258Z"}
+{"level":"info","message":"Client connected: A9O9pDsGgfze6yd0AAAF","timestamp":"2026-04-17T09:48:38.381Z"}
+{"level":"info","message":"Room created: MCQMDH by kim","timestamp":"2026-04-17T09:48:43.028Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T09:53:36.925Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T09:53:36.935Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T09:53:36.937Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T09:53:36.937Z"}
+{"level":"info","message":"Client connected: lJCltj9eF4Y10jhmAAAB","timestamp":"2026-04-17T09:53:41.059Z"}
+{"level":"info","message":"Room created: 38HGTH by kim","timestamp":"2026-04-17T09:53:43.723Z"}
+{"level":"info","message":"Client connected: CV-D3FIigU1CADNwAAAD","timestamp":"2026-04-17T09:53:48.795Z"}
+{"level":"info","message":"Player LO joined room 38HGTH","timestamp":"2026-04-17T09:54:07.991Z"}
+{"level":"info","message":"Client disconnected: lJCltj9eF4Y10jhmAAAB, reason: transport close","timestamp":"2026-04-17T09:54:16.443Z"}
+{"level":"info","message":"Client connected: l-nrxI1SWTK_873tAAAF","timestamp":"2026-04-17T09:54:16.591Z"}
+{"level":"info","message":"Player kim joined room 38HGTH","timestamp":"2026-04-17T09:54:16.623Z"}
+{"level":"info","message":"Client disconnected: l-nrxI1SWTK_873tAAAF, reason: transport close","timestamp":"2026-04-17T09:54:27.315Z"}
+{"level":"info","message":"Client connected: x8KMKsieR2m3mJSHAAAH","timestamp":"2026-04-17T09:54:27.463Z"}
+{"level":"info","message":"Player kim joined room 38HGTH","timestamp":"2026-04-17T09:54:27.499Z"}
+{"level":"info","message":"Client disconnected: CV-D3FIigU1CADNwAAAD, reason: transport close","timestamp":"2026-04-17T09:54:31.200Z"}
+{"level":"info","message":"Client connected: jpTj9ky5YAl5xqABAAAJ","timestamp":"2026-04-17T09:54:31.509Z"}
+{"level":"info","message":"Player LO joined room 38HGTH","timestamp":"2026-04-17T09:54:31.585Z"}
+{"level":"info","message":"Client disconnected: x8KMKsieR2m3mJSHAAAH, reason: transport close","timestamp":"2026-04-17T09:54:42.221Z"}
+{"level":"info","message":"Client connected: ZRezr6RGTFCL_n8jAAAL","timestamp":"2026-04-17T09:54:42.365Z"}
+{"level":"info","message":"Player kim joined room 38HGTH","timestamp":"2026-04-17T09:54:42.389Z"}
+{"level":"info","message":"Client disconnected: ZRezr6RGTFCL_n8jAAAL, reason: transport close","timestamp":"2026-04-17T09:54:46.401Z"}
+{"level":"info","message":"Client connected: kKzA9bwgvx2U6AlRAAAN","timestamp":"2026-04-17T09:54:46.525Z"}
+{"level":"info","message":"Room created: 56GSYG by kim","timestamp":"2026-04-17T09:54:48.949Z"}
+{"level":"info","message":"Client disconnected: jpTj9ky5YAl5xqABAAAJ, reason: transport close","timestamp":"2026-04-17T09:56:44.220Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T10:01:20.877Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T10:01:20.886Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T10:01:20.888Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T10:01:20.888Z"}
+{"level":"info","message":"Client connected: x85HR4enjx0pXf7cAAAB","timestamp":"2026-04-17T10:01:27.886Z"}
+{"level":"info","message":"Player kim joined room 56GSYG","timestamp":"2026-04-17T10:01:27.960Z"}
+{"level":"info","message":"Client disconnected: x85HR4enjx0pXf7cAAAB, reason: transport close","timestamp":"2026-04-17T10:01:35.720Z"}
+{"level":"info","message":"Client connected: Ob7LAyinWdQqWaBZAAAD","timestamp":"2026-04-17T10:01:35.869Z"}
+{"level":"info","message":"Room created: 2FHV7V by aa","timestamp":"2026-04-17T10:01:41.330Z"}
+{"level":"info","message":"Client connected: aKBBRunGNY3U2eFKAAAF","timestamp":"2026-04-17T10:01:48.080Z"}
+{"level":"info","message":"Client disconnected: aKBBRunGNY3U2eFKAAAF, reason: transport close","timestamp":"2026-04-17T10:01:48.270Z"}
+{"level":"info","message":"Client connected: Twt1zhnoBbhKJoL4AAAH","timestamp":"2026-04-17T10:01:48.516Z"}
+{"level":"info","message":"Client disconnected: Twt1zhnoBbhKJoL4AAAH, reason: transport close","timestamp":"2026-04-17T10:01:50.100Z"}
+{"level":"info","message":"Client connected: NlhHa5wUQuvIxeJXAAAJ","timestamp":"2026-04-17T10:01:52.193Z"}
+{"level":"info","message":"Player BB joined room 2FHV7V","timestamp":"2026-04-17T10:02:10.694Z"}
+{"level":"info","message":"Client disconnected: Ob7LAyinWdQqWaBZAAAD, reason: transport close","timestamp":"2026-04-17T10:02:19.890Z"}
+{"level":"info","message":"Client connected: xp-th2gmBNVAhmifAAAL","timestamp":"2026-04-17T10:02:20.048Z"}
+{"level":"info","message":"Player aa joined room 2FHV7V","timestamp":"2026-04-17T10:02:20.073Z"}
+{"level":"info","message":"Client disconnected: xp-th2gmBNVAhmifAAAL, reason: transport close","timestamp":"2026-04-17T10:02:31.601Z"}
+{"level":"info","message":"Client connected: vam6TKCsHXZm7mmQAAAN","timestamp":"2026-04-17T10:02:31.747Z"}
+{"level":"info","message":"Player aa joined room 2FHV7V","timestamp":"2026-04-17T10:02:31.771Z"}
+{"level":"info","message":"Client connected: IDkMEnaQF8yo5sCvAAAP","timestamp":"2026-04-17T10:02:53.959Z"}
+{"level":"info","message":"Client disconnected: IDkMEnaQF8yo5sCvAAAP, reason: transport close","timestamp":"2026-04-17T10:03:01.162Z"}
+{"level":"info","message":"Client disconnected: NlhHa5wUQuvIxeJXAAAJ, reason: transport close","timestamp":"2026-04-17T10:04:20.439Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T10:13:59.454Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T10:13:59.464Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T10:13:59.466Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T10:13:59.466Z"}
+{"level":"info","message":"Client connected: c5h2A-7_B4pTGAVHAAAB","timestamp":"2026-04-17T10:14:05.312Z"}
+{"level":"info","message":"Room created: XBRWK4 by aa","timestamp":"2026-04-17T10:14:09.749Z"}
+{"level":"info","message":"Client connected: iVVpZtRXwjNUcVYAAAAD","timestamp":"2026-04-17T10:14:13.224Z"}
+{"level":"info","message":"Client disconnected: iVVpZtRXwjNUcVYAAAAD, reason: transport close","timestamp":"2026-04-17T10:14:13.317Z"}
+{"level":"info","message":"Client connected: ymLTCJDP_j1iFkXEAAAF","timestamp":"2026-04-17T10:14:13.593Z"}
+{"level":"info","message":"Player BB joined room 2FHV7V","timestamp":"2026-04-17T10:14:13.670Z"}
+{"level":"info","message":"Player BB joined room XBRWK4","timestamp":"2026-04-17T10:14:31.070Z"}
+{"level":"info","message":"Client disconnected: c5h2A-7_B4pTGAVHAAAB, reason: transport close","timestamp":"2026-04-17T10:14:38.549Z"}
+{"level":"info","message":"Client connected: 0AilDsw1oNodW31yAAAH","timestamp":"2026-04-17T10:14:38.707Z"}
+{"level":"info","message":"Player aa joined room XBRWK4","timestamp":"2026-04-17T10:14:38.738Z"}
+{"level":"info","message":"Client disconnected: 0AilDsw1oNodW31yAAAH, reason: transport close","timestamp":"2026-04-17T10:14:51.014Z"}
+{"level":"info","message":"Client connected: xWoQXESjhioFr-hLAAAJ","timestamp":"2026-04-17T10:14:51.160Z"}
+{"level":"info","message":"Player aa joined room XBRWK4","timestamp":"2026-04-17T10:14:51.189Z"}
+{"level":"info","message":"Room created: YCH9ML by a1","timestamp":"2026-04-17T10:15:06.246Z"}
+{"level":"info","message":"Client connected: D_nDJbdS5HB-UYpDAAAL","timestamp":"2026-04-17T10:16:34.162Z"}
+{"level":"info","message":"Client disconnected: D_nDJbdS5HB-UYpDAAAL, reason: transport close","timestamp":"2026-04-17T10:16:41.544Z"}
+{"level":"info","message":"Client disconnected: ymLTCJDP_j1iFkXEAAAF, reason: transport close","timestamp":"2026-04-17T10:16:53.320Z"}
+{"level":"info","message":"Client connected: KD8cAXRI8lrOP56wAAAN","timestamp":"2026-04-17T10:16:56.665Z"}
+{"level":"info","message":"Client disconnected: KD8cAXRI8lrOP56wAAAN, reason: transport close","timestamp":"2026-04-17T10:16:59.970Z"}
+{"level":"info","message":"Client connected: sDowHVWjdUhTkbTLAAAP","timestamp":"2026-04-17T10:17:00.068Z"}
+{"level":"info","message":"Client disconnected: sDowHVWjdUhTkbTLAAAP, reason: transport close","timestamp":"2026-04-17T10:17:01.147Z"}
+{"level":"info","message":"Client connected: DCqOgbdWfkKeY-pjAAAR","timestamp":"2026-04-17T10:17:01.244Z"}
+{"level":"info","message":"Client disconnected: DCqOgbdWfkKeY-pjAAAR, reason: transport close","timestamp":"2026-04-17T10:17:03.292Z"}
+{"level":"info","message":"Client connected: dXE9pWq_m4-AvSpUAAAT","timestamp":"2026-04-17T10:17:09.182Z"}
+{"level":"info","message":"Player li joined room YCH9ML","timestamp":"2026-04-17T10:17:22.517Z"}
+{"level":"info","message":"Client disconnected: xWoQXESjhioFr-hLAAAJ, reason: transport close","timestamp":"2026-04-17T10:17:28.080Z"}
+{"level":"info","message":"Client connected: LvyesSt7GERKv8ZhAAAV","timestamp":"2026-04-17T10:17:28.239Z"}
+{"level":"info","message":"Room created: T9Z6T5 by a1","timestamp":"2026-04-17T10:17:33.609Z"}
+{"level":"info","message":"Client disconnected: dXE9pWq_m4-AvSpUAAAT, reason: transport close","timestamp":"2026-04-17T10:17:42.563Z"}
+{"level":"info","message":"Client disconnected: LvyesSt7GERKv8ZhAAAV, reason: transport close","timestamp":"2026-04-17T10:20:09.583Z"}
+{"level":"info","message":"Client connected: DCx2GeXZrAT4nT9NAAAX","timestamp":"2026-04-17T10:20:12.762Z"}
+{"level":"info","message":"Player a1 joined room T9Z6T5","timestamp":"2026-04-17T10:20:12.828Z"}
+{"level":"info","message":"Client connected: YWo7fDU6VGa2gD_YAAAZ","timestamp":"2026-04-17T10:22:44.086Z"}
+{"level":"info","message":"Client connected: RcF6Wd494ZAp0GM1AAAb","timestamp":"2026-04-17T10:22:47.703Z"}
+{"level":"info","message":"Client disconnected: YWo7fDU6VGa2gD_YAAAZ, reason: transport close","timestamp":"2026-04-17T10:22:52.055Z"}
+{"level":"info","message":"Client disconnected: RcF6Wd494ZAp0GM1AAAb, reason: transport close","timestamp":"2026-04-17T10:22:54.526Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T10:25:19.831Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T10:25:19.841Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T10:25:19.842Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T10:25:19.842Z"}
+{"level":"info","message":"Client connected: U-5zfzCxqoCbBfZYAAAB","timestamp":"2026-04-17T10:25:20.378Z"}
+{"level":"info","message":"Client disconnected: U-5zfzCxqoCbBfZYAAAB, reason: transport close","timestamp":"2026-04-17T10:25:23.482Z"}
+{"level":"info","message":"Client connected: KHItVlIhw0xkOV62AAAD","timestamp":"2026-04-17T10:25:23.671Z"}
+{"level":"info","message":"Player a1 joined room T9Z6T5","timestamp":"2026-04-17T10:25:23.764Z"}
+{"level":"info","message":"Client disconnected: KHItVlIhw0xkOV62AAAD, reason: transport close","timestamp":"2026-04-17T10:25:29.724Z"}
+{"level":"info","message":"Client connected: AqNq5JpQ0UhuiBfHAAAF","timestamp":"2026-04-17T10:25:29.877Z"}
+{"level":"info","message":"Room created: JZETP7 by a1","timestamp":"2026-04-17T10:25:32.326Z"}
+{"level":"info","message":"Client connected: 1B0ad07BFCXwB8ytAAAH","timestamp":"2026-04-17T10:25:51.437Z"}
+{"level":"info","message":"Player li joined room JZETP7","timestamp":"2026-04-17T10:26:03.835Z"}
+{"level":"info","message":"Client disconnected: AqNq5JpQ0UhuiBfHAAAF, reason: transport close","timestamp":"2026-04-17T10:26:10.317Z"}
+{"level":"info","message":"Client connected: Pe80rGoIAJGewG7RAAAJ","timestamp":"2026-04-17T10:26:10.475Z"}
+{"level":"info","message":"Player a1 joined room JZETP7","timestamp":"2026-04-17T10:26:10.501Z"}
+{"level":"info","message":"Client connected: 5byIA_Gs8PhvCXEzAAAL","timestamp":"2026-04-17T10:26:18.736Z"}
+{"level":"info","message":"Room created: WLGLMK by a1","timestamp":"2026-04-17T10:26:21.195Z"}
+{"level":"info","message":"Client disconnected: 5byIA_Gs8PhvCXEzAAAL, reason: transport close","timestamp":"2026-04-17T10:26:25.265Z"}
+{"level":"info","message":"Client disconnected: 1B0ad07BFCXwB8ytAAAH, reason: transport close","timestamp":"2026-04-17T10:26:29.853Z"}
+{"level":"info","message":"Client connected: 01jUKauAyj0bfPtQAAAN","timestamp":"2026-04-17T10:26:33.946Z"}
+{"level":"info","message":"Client disconnected: 01jUKauAyj0bfPtQAAAN, reason: transport close","timestamp":"2026-04-17T10:26:34.030Z"}
+{"level":"info","message":"Client connected: FuWw_3ucrHWSZzSaAAAP","timestamp":"2026-04-17T10:26:34.299Z"}
+{"level":"info","message":"Player BB joined room XBRWK4","timestamp":"2026-04-17T10:26:35.075Z"}
+{"level":"info","message":"Client disconnected: FuWw_3ucrHWSZzSaAAAP, reason: transport close","timestamp":"2026-04-17T10:26:35.432Z"}
+{"level":"info","message":"Client connected: I_e26Ep-eBveQxsAAAAR","timestamp":"2026-04-17T10:26:35.749Z"}
+{"level":"info","message":"Player BB joined room XBRWK4","timestamp":"2026-04-17T10:26:35.839Z"}
+{"level":"info","message":"Client disconnected: I_e26Ep-eBveQxsAAAAR, reason: transport close","timestamp":"2026-04-17T10:26:38.407Z"}
+{"level":"info","message":"Client connected: aAEe8MAE3DqwAVF9AAAT","timestamp":"2026-04-17T10:26:40.528Z"}
+{"level":"info","message":"Player b2 joined room WLGLMK","timestamp":"2026-04-17T10:26:58.634Z"}
+{"level":"info","message":"Client disconnected: Pe80rGoIAJGewG7RAAAJ, reason: transport close","timestamp":"2026-04-17T10:27:06.872Z"}
+{"level":"info","message":"Client connected: 69Rg9LOhZScnU6npAAAV","timestamp":"2026-04-17T10:27:07.031Z"}
+{"level":"info","message":"Player a1 joined room WLGLMK","timestamp":"2026-04-17T10:27:07.063Z"}
+{"level":"info","message":"Client disconnected: 69Rg9LOhZScnU6npAAAV, reason: transport close","timestamp":"2026-04-17T10:27:12.316Z"}
+{"level":"info","message":"Client connected: a2Z9qbHjP3mK_uYNAAAX","timestamp":"2026-04-17T10:27:12.442Z"}
+{"level":"info","message":"Room created: 3DCVTD by a1","timestamp":"2026-04-17T10:27:13.488Z"}
+{"level":"info","message":"Client connected: sQ0OUL448PV_CJFHAAAZ","timestamp":"2026-04-17T10:27:13.891Z"}
+{"level":"info","message":"Client disconnected: sQ0OUL448PV_CJFHAAAZ, reason: transport close","timestamp":"2026-04-17T10:27:19.992Z"}
+{"level":"info","message":"Client disconnected: aAEe8MAE3DqwAVF9AAAT, reason: transport close","timestamp":"2026-04-17T10:29:04.139Z"}
+{"level":"info","message":"Client connected: GUNHzPNJcsZRHt-8AAAb","timestamp":"2026-04-17T10:32:13.019Z"}
+{"level":"info","message":"Client disconnected: GUNHzPNJcsZRHt-8AAAb, reason: transport close","timestamp":"2026-04-17T10:32:13.039Z"}
+{"level":"info","message":"Client connected: eDIsmodR9yhk99-eAAAd","timestamp":"2026-04-17T10:32:13.239Z"}
+{"level":"info","message":"Player b2 joined room WLGLMK","timestamp":"2026-04-17T10:32:13.285Z"}
+{"level":"info","message":"Player b2 joined room 3DCVTD","timestamp":"2026-04-17T10:32:30.785Z"}
+{"level":"info","message":"Client connected: asJn4aIVaArS8wXaAAAf","timestamp":"2026-04-17T10:32:39.692Z"}
+{"level":"info","message":"Client disconnected: eDIsmodR9yhk99-eAAAd, reason: transport close","timestamp":"2026-04-17T10:32:44.050Z"}
+{"level":"info","message":"Client disconnected: asJn4aIVaArS8wXaAAAf, reason: transport close","timestamp":"2026-04-17T10:32:47.240Z"}
+{"level":"info","message":"Client disconnected: a2Z9qbHjP3mK_uYNAAAX, reason: transport close","timestamp":"2026-04-17T10:32:50.009Z"}
+{"level":"info","message":"Client connected: rP4G0sjt4P7seqxdAAAh","timestamp":"2026-04-17T10:32:50.191Z"}
+{"level":"info","message":"Player a1 joined room 3DCVTD","timestamp":"2026-04-17T10:32:50.228Z"}
+{"level":"info","message":"SIGTERM received, shutting down gracefully","timestamp":"2026-04-17T10:36:15.653Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T10:36:21.350Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T10:36:21.363Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T10:36:21.364Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T10:36:21.365Z"}
+{"level":"info","message":"Client connected: j8SkO_jRmr_2S-MQAAAB","timestamp":"2026-04-17T10:36:22.799Z"}
+{"level":"info","message":"Client connected: z-nORuoIFnjNHx2eAAAD","timestamp":"2026-04-17T10:38:37.561Z"}
+{"level":"info","message":"Client disconnected: z-nORuoIFnjNHx2eAAAD, reason: transport close","timestamp":"2026-04-17T10:38:45.841Z"}
+{"level":"info","message":"SIGTERM received, shutting down gracefully","timestamp":"2026-04-17T10:43:07.644Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T10:43:13.277Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T10:43:13.284Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T10:43:13.285Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T10:43:13.286Z"}
+{"level":"info","message":"Client connected: rYbbVM_kyLTsjdizAAAB","timestamp":"2026-04-17T10:43:14.770Z"}
+{"level":"info","message":"SIGTERM received, shutting down gracefully","timestamp":"2026-04-17T10:43:26.480Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T10:43:32.142Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T10:43:32.150Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T10:43:32.152Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T10:43:32.152Z"}
+{"level":"info","message":"SIGTERM received, shutting down gracefully","timestamp":"2026-04-17T10:43:32.239Z"}
+{"level":"info","message":"Server closed","timestamp":"2026-04-17T10:43:32.241Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T10:43:32.894Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T10:43:32.903Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T10:43:32.905Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T10:43:32.905Z"}
+{"level":"info","message":"Client connected: mmWwRxtcEF_bZ_tVAAAB","timestamp":"2026-04-17T10:43:33.274Z"}
+{"level":"info","message":"SIGTERM received, shutting down gracefully","timestamp":"2026-04-17T10:43:42.596Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T10:43:45.830Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T10:43:45.841Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T10:43:45.842Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T10:43:45.842Z"}
+{"level":"info","message":"Client connected: Qa9wxT0miSBfXlS1AAAB","timestamp":"2026-04-17T10:43:47.908Z"}
+{"level":"info","message":"SIGTERM received, shutting down gracefully","timestamp":"2026-04-17T10:47:04.088Z"}
+{"level":"info","message":"Client disconnected: Qa9wxT0miSBfXlS1AAAB, reason: forced close","timestamp":"2026-04-17T10:47:04.833Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T11:05:24.839Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T11:05:24.849Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T11:05:24.850Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T11:05:24.851Z"}
+{"level":"info","message":"Client connected: xQf0wVC9apmJEhKwAAAB","timestamp":"2026-04-17T11:05:35.651Z"}
+{"level":"info","message":"Room created: DW6W49 by a1","timestamp":"2026-04-17T11:05:37.323Z"}
+{"level":"info","message":"Room DW6W49 created by a1","timestamp":"2026-04-17T11:05:37.324Z"}
+{"level":"info","message":"Client connected: N_lxtKf4s4dbOO6kAAAD","timestamp":"2026-04-17T11:05:49.660Z"}
+{"level":"info","message":"Player l8 joined room DW6W49","timestamp":"2026-04-17T11:06:09.162Z"}
+{"level":"info","message":"Player l8 joined room DW6W49","timestamp":"2026-04-17T11:06:09.163Z"}
+{"level":"info","message":"Room created: 6SDA7M by 11","timestamp":"2026-04-17T11:06:36.836Z"}
+{"level":"info","message":"Room 6SDA7M created by 11","timestamp":"2026-04-17T11:06:36.837Z"}
+{"level":"info","message":"Player left room DW6W49","timestamp":"2026-04-17T11:06:42.449Z"}
+{"level":"info","message":"Client disconnected: N_lxtKf4s4dbOO6kAAAD, reason: transport close","timestamp":"2026-04-17T11:06:43.595Z"}
+{"level":"info","message":"Client connected: 8zrAJwZ9w4Uvq9i4AAAF","timestamp":"2026-04-17T11:06:43.707Z"}
+{"level":"info","message":"Player l8 joined room DW6W49","timestamp":"2026-04-17T11:06:43.730Z"}
+{"level":"info","message":"Player l8 joined room DW6W49","timestamp":"2026-04-17T11:06:43.731Z"}
+{"level":"info","message":"Player 22 joined room 6SDA7M","timestamp":"2026-04-17T11:07:01.142Z"}
+{"level":"info","message":"Player 22 joined room 6SDA7M","timestamp":"2026-04-17T11:07:01.143Z"}
+{"level":"info","message":"Client disconnected: 8zrAJwZ9w4Uvq9i4AAAF, reason: transport close","timestamp":"2026-04-17T11:07:18.951Z"}
+{"level":"info","message":"Client disconnected: xQf0wVC9apmJEhKwAAAB, reason: transport close","timestamp":"2026-04-17T11:13:55.643Z"}
+{"level":"info","message":"Client connected: 6z-v-51k6fHj2VI2AAAH","timestamp":"2026-04-17T11:13:55.807Z"}
+{"level":"info","message":"Player 11 joined room 6SDA7M","timestamp":"2026-04-17T11:13:55.838Z"}
+{"level":"info","message":"Room created: QP75NR by 11","timestamp":"2026-04-17T11:14:00.839Z"}
+{"level":"info","message":"Room QP75NR created by 11","timestamp":"2026-04-17T11:14:00.840Z"}
+{"level":"info","message":"Player left room 6SDA7M","timestamp":"2026-04-17T11:14:08.014Z"}
+{"level":"info","message":"Client connected: d0CqYpOC3nA9QCyWAAAJ","timestamp":"2026-04-17T11:16:09.755Z"}
+{"level":"info","message":"Client disconnected: d0CqYpOC3nA9QCyWAAAJ, reason: transport close","timestamp":"2026-04-17T11:16:17.441Z"}
+{"level":"info","message":"Client connected: 1h-sBm4rKOOSvWvhAAAL","timestamp":"2026-04-17T11:16:41.624Z"}
+{"level":"info","message":"Client disconnected: 1h-sBm4rKOOSvWvhAAAL, reason: transport close","timestamp":"2026-04-17T11:16:49.073Z"}
+{"level":"info","message":"Client connected: dHhcGRKjniLLHKabAAAN","timestamp":"2026-04-17T11:17:09.825Z"}
+{"level":"info","message":"Client disconnected: dHhcGRKjniLLHKabAAAN, reason: transport close","timestamp":"2026-04-17T11:17:18.550Z"}
+{"level":"info","message":"Redis Client Connected","timestamp":"2026-04-17T11:32:57.202Z"}
+{"level":"info","message":"Connected to Redis","timestamp":"2026-04-17T11:32:57.213Z"}
+{"level":"info","message":"🚀 Server running on port 3000","timestamp":"2026-04-17T11:32:57.214Z"}
+{"level":"info","message":"📊 Health check: http://localhost:3000/health","timestamp":"2026-04-17T11:32:57.215Z"}
+{"level":"info","message":"Client connected: 0E0jJ2S4n8lj036xAAAB","timestamp":"2026-04-17T11:33:08.503Z"}
+{"level":"info","message":"Room created: FTQSQC by 11","timestamp":"2026-04-17T11:33:12.361Z"}
+{"level":"info","message":"Room FTQSQC created by 11","timestamp":"2026-04-17T11:33:12.362Z"}
+{"level":"info","message":"Room created: BQNEFD by 11","timestamp":"2026-04-17T11:33:22.693Z"}
+{"level":"info","message":"Room BQNEFD created by 11","timestamp":"2026-04-17T11:33:22.694Z"}
+{"level":"info","message":"Client connected: FG7D-fbS6XY0yhLvAAAD","timestamp":"2026-04-17T11:33:38.230Z"}
+{"level":"info","message":"Player 22 joined room BQNEFD","timestamp":"2026-04-17T11:33:47.942Z"}
+{"level":"info","message":"Player 22 joined room BQNEFD","timestamp":"2026-04-17T11:33:47.943Z"}
+{"level":"info","message":"Player left room BQNEFD","timestamp":"2026-04-17T11:34:04.695Z"}
